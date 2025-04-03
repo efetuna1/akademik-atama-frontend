@@ -33,6 +33,6 @@
     "shadcn-ui": "^0.9.5",
     "tailwind-variants": "^1.0.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "5.8.2"
   }
 }

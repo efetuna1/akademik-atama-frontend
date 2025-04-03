@@ -23,7 +23,7 @@ export function LoginForm() {
             router.push("/ilanYonetimi");
         } else if (role === "candidate") {
             // Aday olarak giriş yaptıysa başvuru sayfasına yönlendir
-            router.push("/candidate/dashboard");
+            router.push("/aday");
         } else if (role === "jury") {
             // Jüri olarak giriş yaptıysa jüri değerlendirme sayfasına yönlendir
             router.push("/jury/dashboard");
