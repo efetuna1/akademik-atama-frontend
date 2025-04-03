@@ -28,7 +28,7 @@ export default function Home() {
       {/* İlanlar ve Duyurular */}
       <div className="mt-12 w-full max-w-4xl bg-white shadow-lg rounded-2xl p-6">
         <h2 className="text-2xl font-semibold text-blue-600 mb-4">
-          Güncel
+          Güncel İlanlar
         </h2> <Link href="/login" className="text-red-500 hover:underline mt-2 block">
           Başvuru yapmak için buraya tıklayarak giriş yapabilirsiniz.
         </Link>
