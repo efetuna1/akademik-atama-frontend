@@ -1,0 +1,85 @@
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
+export default function Home() {
+
+  return (
+    <main className="flex flex-col items-center justify-center min-h-screen bg-stone-200 p-6">
+      <br />
+      {/* Ana içerik alanı */}
+      <div className="max-w-3xl bg-white shadow-lg rounded-2xl p-8 text-center">
+        <h1 className="text-4xl font-bold text-blue-600 mb-4">
+          Akademik Başvuru Sistemi
+        </h1>
+        <p className="text-gray-700 text-lg mb-6">
+          Kocaeli Üniversitesi Akademik Başvuru Sistemi'ne hoş geldiniz! Bu sistem, akademik ilanlarınızı ve başvurularınızı kolayca oluşturmanızı, güncellemenizi ve takip etmenizi sağlar. Lütfen giriş yapın veya yeni bir hesap oluşturun.
+        </p>
+
+        {/* Giriş butonu */}
+        <div className="flex flex-col gap-4 bg-black text-white ">
+          <Link href="/login">
+            <Button variant="default" className="w-full">
+              Giriş Yap
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {/* İlanlar ve Duyurular */}
+      <div className="mt-12 w-full max-w-4xl bg-white shadow-lg rounded-2xl p-6">
+        <h2 className="text-2xl font-semibold text-blue-600 mb-4">
+          Güncel İlanlar
+        </h2> <Link href="/login" className="text-red-500 hover:underline mt-2 block">
+          Başvuru yapmak için buraya tıklayarak giriş yapabilirsiniz.
+        </Link>
+        <div className="flex flex-col gap-4">
+          <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+            <h3 className="font-semibold text-lg">Yeni Başvuru İlanı: Bilimsel Araştırma Bursu</h3>
+            <p className="text-gray-600">Son başvuru tarihi: 30 Nisan 2025</p>
+            <Link href="/login" className="text-blue-500 hover:underline mt-2 block">
+
+            </Link>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+            <h3 className="font-semibold text-lg">Yeni Başvuru İlanı: Öğretim Üyesi Aranıyor</h3>
+            <p className="text-gray-600">Son başvuru tarihi: 15 Mayıs 2025</p>
+            <Link href="/login" className="text-blue-500 hover:underline mt-2 block">
+
+            </Link>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+            <h3 className="font-semibold text-lg">Yeni Başvuru İlanı: Akademik Kongre Katılım Desteği</h3>
+            <p className="text-gray-600">Son başvuru tarihi: 5 Haziran 2025</p>
+
+          </div>
+          <Link href="/IlanlarPage" className="text-blue-500 hover:underline mt-2 block">
+            Daha fazlasını gör
+          </Link>
+        </div>
+      </div>
+
+      {/* Reklam ve Bilgi Alanı */}
+      <div className="mt-12 w-full max-w-4xl bg-white shadow-lg rounded-2xl p-6">
+        <h2 className="text-2xl font-semibold text-blue-600 mb-4">
+          Akademik İhtiyaçlarınızı Karşılayacak Çözümler
+        </h2>
+        <div className="flex gap-6">
+          <div className="flex-1 p-4 bg-gray-50 rounded-lg shadow-sm">
+            <h3 className="font-semibold text-lg">Akademik Yazılım Çözümleri</h3>
+            <p className="text-gray-600">Araştırmalarınızı hızlandırmak için en iyi yazılım araçları. Şimdi keşfedin.</p>
+            <Link href="/reklam/1" className="text-blue-500 hover:underline mt-2 block">
+              Giriş Yap
+            </Link>
+          </div>
+          <div className="flex-1 p-4 bg-gray-50 rounded-lg shadow-sm">
+            <h3 className="font-semibold text-lg">Uluslararası Akademik Burslar</h3>
+            <p className="text-gray-600">Uluslararası burslar ve destekler hakkında bilgi alabilirsiniz.</p>
+            <Link href="/reklam/2" className="text-blue-500 hover:underline mt-2 block">
+              Giriş Yap
+            </Link>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
