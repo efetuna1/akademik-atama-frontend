@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import MakaleForm from "@/components/cv/MakaleForm";
+import BilimselToplantiForm from "@/components/cv/BilimselToplantiForm";
+import KitapForm from "@/components/cv/KitapForm";
 import Modal from "@/components/cv/Modal";
 import { Button } from "@/components/ui/button";
 
@@ -26,7 +28,22 @@ const ilanlar = [
 ];
 
 export default function AdayPage() {
-    const [isMakaleFormOpen, setIsMakaleFormOpen] = useState(false);
+    const [modalType, setModalType] = useState<"makale" | "toplanti" | "kitap" | null>(null);
+
+    const handleMakaleSave = (data: any) => {
+        console.log("Makale Kaydedildi:", data);
+        setModalType(null);
+    };
+    const handleToplantiSave = (data: any) => {
+        console.log("Bilimsel Toplantı Kaydedildi:", data);
+        setModalType(null);
+    }
+    const handleKitapSave = (data: any) => {
+        console.log("Kitap Kaydedildi:", data);
+        setModalType(null);
+    };
+
+
 
     return (
         <main className="flex flex-col items-center min-h-screen bg-gray-100 p-6">
@@ -44,11 +61,9 @@ export default function AdayPage() {
                                 <p className="text-gray-600">Başvuru Kriterleri: {ilan.criteria}</p>
 
                                 <div className="mt-2 flex gap-4">
-                                    {/* Detaya Git */}
                                     <Link href={`/ilan/${ilan.id}`} className="text-blue-500 hover:underline">
                                         Detayları Gör
                                     </Link>
-                                    {/* Başvuru Yap */}
                                     <Link href={`/basvuru/${ilan.id}`} className="text-green-500 hover:underline">
                                         Başvuru Yap
                                     </Link>
@@ -60,19 +75,71 @@ export default function AdayPage() {
 
                 {/* Özgeçmiş Ekleme Alanı */}
                 <div className="mb-8">
-                    <h1 className="text-2xl text-blue-600 font-bold mb-4">Aday Özgeçmiş</h1><br></br>
+                    <h1 className="text-2xl text-blue-600 font-bold mb-4">Aday Özgeçmiş</h1>
+                    <hr></hr>
+                    <hr></hr>
+                    <br></br>
                     <h2 className="text-xl font-bold mb-3">Makaleler</h2>
+                    <div className="flex gap-4 mb-4">
+                        <Button
+                            onClick={() => setModalType("makale")}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                        >
+                            + Makale Ekle
+                        </Button>
+                    </div>
 
-                    {/* Makale Ekle Butonu */}
-                    <Button onClick={() => setIsMakaleFormOpen(true)} className="bg-blue-500 text-white py-4 px-4 rounded">
-                        + Makale Ekle
-                    </Button>
+                    <hr></hr>
+                    <br></br>
+                    <h2 className="text-xl font-bold mb-3">Bilimsel Toplantılar</h2>
+                    <div className="flex gap-4 mb-4">
+                        <Button
+                            onClick={() => setModalType("toplanti")}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                        >
+                            + Bilimsel Toplantı Ekle
+                        </Button>
+                    </div>
 
-                    {/* Modal İçinde Makale Formu */}
-                    <Modal isOpen={isMakaleFormOpen} onClose={() => setIsMakaleFormOpen(false)}>
-                        <MakaleForm onSave={function (): void {
-                            throw new Error("Function not implemented.");
-                        }} />
+                    <hr></hr>
+                    <br></br>
+
+
+                    <h2 className="text-xl font-bold mb-3">Kitaplar</h2>
+
+                    {/* Kitap Ekle Butonu */}
+                    <div className="flex gap-4 mb-4">
+                        <Button
+                            onClick={() => setModalType("kitap")}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                        >
+                            + Kitap Ekle
+                        </Button>
+                    </div>
+                    <hr></hr>
+                    <br></br>
+                    <Modal
+                        isOpen={modalType === "makale"}
+                        onClose={() => setModalType(null)}
+                        title="Makale Ekle"
+                    >
+                        <MakaleForm onSave={handleMakaleSave} />
+                    </Modal>
+
+                    <Modal
+                        isOpen={modalType === "toplanti"}
+                        onClose={() => setModalType(null)}
+                        title="Bilimsel Toplantı Ekle"
+                    >
+                        <BilimselToplantiForm onSave={handleToplantiSave} />
+                    </Modal>
+                    {/* Modal İçinde Kitap Formu */}
+                    <Modal
+                        isOpen={modalType === "kitap"}
+                        onClose={() => setModalType(null)}
+                        title="Kitap Ekle"
+                    >
+                        <KitapForm onSave={handleKitapSave} />
                     </Modal>
                 </div>
             </div>
