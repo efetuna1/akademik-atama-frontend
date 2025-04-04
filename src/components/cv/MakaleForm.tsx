@@ -13,7 +13,7 @@ interface Makale {
     kategori: string;
 }
 interface MakaleFormProps {
-    onSave: () => void;
+    onSave: (data: any) => void;
 }
 
 const makaleKategorileri = [
@@ -51,11 +51,11 @@ export default function MakaleForm({ onSave }: MakaleFormProps) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log("Makale Verileri:", makale);
-        onSave(); // Modal'ı kapat
+        onSave(FormData); // Modal'ı kapat
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-half md:w-3/4 lg:w-2/3">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full md:w-3/4 lg:w-2/3 xl:w-full p-6 bg-white rounded-lg shadow-lg">
             <h2 className="text-2xl font-semibold text-center">Makale Bilgileri</h2>
 
             <input
@@ -120,7 +120,7 @@ export default function MakaleForm({ onSave }: MakaleFormProps) {
                     </option>
                 ))}
             </select>
-            <Button type="submit" className="bg-blue-500 text-white py-2 rounded">
+            <Button type="submit" className="bg-blue-500 text-white py-2 rounded hover:bg-blue-700">
                 Kaydet
             </Button>
         </form>
