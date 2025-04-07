@@ -74,7 +74,7 @@ export default function Home() {
           <div className="flex-1 p-4 bg-gray-50 rounded-lg shadow-sm">
             <h3 className="font-semibold text-lg">Uluslararası Akademik Burslar</h3>
             <p className="text-gray-600">Uluslararası burslar ve destekler hakkında bilgi alabilirsiniz.</p>
-            <Link href="/reklam/2" className="text-blue-500 hover:underline mt-2 block">
+            <Link href="/login" className="text-blue-500 hover:underline mt-2 block">
               Giriş Yap
             </Link>
           </div>
