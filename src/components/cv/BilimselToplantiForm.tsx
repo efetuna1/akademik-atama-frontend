@@ -79,7 +79,7 @@ export default function BilimselToplantiForm({ onSave }: Props) {
                 <input name="sayfaSayisi" type="text" placeholder="Sayfa Sayısı" onChange={handleChange} className="border p-2 rounded" />
                 <input name="tarih" type="date" onChange={handleChange} className="border p-2 rounded" />
             </div>
-
+            <h2 className="block font-semibold mt-12">Lütfen Kategori Seçiniz</h2>
             <select name="kategori" onChange={handleChange} className="border p-2 rounded w-full mt-4">
                 {kategoriListesi.map((k, i) => (
                     <option key={i} value={k}>{k}</option>
