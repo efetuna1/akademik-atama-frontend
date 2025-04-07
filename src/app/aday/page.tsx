@@ -2,15 +2,20 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import Modal from "@/components/cv/Modal";
 import MakaleForm from "@/components/cv/MakaleForm";
 import BilimselToplantiForm from "@/components/cv/BilimselToplantiForm";
 import KitapForm from "@/components/cv/KitapForm";
-import Modal from "@/components/cv/Modal";
-import { Button } from "@/components/ui/button";
 import AtifForm from "@/components/cv/AtifForm";
 import EgitimForm from "@/components/cv/EgitimForm";
 import TezForm from "@/components/cv/TezForm";
 import PatentForm from "@/components/cv/PatentForm";
+import ArastirmaProjesiForm from "@/components/cv/ArastirmaProjesiForm";
+import EditorlukForm from "@/components/cv/EditorlukForm";
+import OdullerForm from "@/components/cv/OdullerForm";
+import IdariGorevlerForm from "@/components/cv/IdariGorevlerForm";
+import GuzelSanatlarForm from "@/components/cv/GuzelSanatlarForm";
 
 
 const ilanlar = [
@@ -33,7 +38,7 @@ const ilanlar = [
 ];
 
 export default function AdayPage() {
-    const [modalType, setModalType] = useState<"makale" | "toplanti" | "kitap" | "atif" | "egitim" | "tez" | "patent" | null>(null);
+    const [modalType, setModalType] = useState<"makale" | "toplanti" | "kitap" | "atif" | "egitim" | "tez" | "patent" | "proje" | "editorluk" | "oduller" | "idarigorev" | "guzelsanatlar" | null>(null);
 
     const handleMakaleSave = (data: any) => {
         console.log("Makale Kaydedildi:", data);
@@ -63,6 +68,28 @@ export default function AdayPage() {
         console.log("Patent Kaydedildi:", data);
         setModalType(null);
     }
+    const handleArastirmaProjesiSave = (data: any) => {
+        console.log("Araştırma Projesi Kaydedildi:", data);
+        setModalType(null);
+    };
+    const handleEditorlukSave = (data: any) => {
+        console.log("Editörlük Kaydedildi:", data);
+        setModalType(null);
+    };
+    const handleOdullerSave = (data: any) => {
+        console.log("Ödül Kaydedildi:", data);
+        setModalType(null);
+    };
+    const handleIdariGorevlerSave = (data: any) => {
+        console.log("İdari Görevler Kaydedildi:", data);
+        setModalType(null);
+    };
+    const handleGuzelSanatlarSave = (data: any) => {
+        console.log("Güzel Sanatlar Kaydedildi:", data);
+        setModalType(null);
+    };
+
+
 
 
 
@@ -104,7 +131,7 @@ export default function AdayPage() {
                     <div className="flex gap-4 mb-4">
                         <Button
                             onClick={() => setModalType("makale")}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 lg:w-2/7"
                         >
                             + Makale Ekle
                         </Button>
@@ -116,7 +143,7 @@ export default function AdayPage() {
                     <div className="flex gap-4 mb-4">
                         <Button
                             onClick={() => setModalType("toplanti")}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 lg:w-2/7"
                         >
                             + Bilimsel Toplantı Ekle
                         </Button>
@@ -132,7 +159,7 @@ export default function AdayPage() {
                     <div className="flex gap-4 mb-4">
                         <Button
                             onClick={() => setModalType("kitap")}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 lg:w-2/7"
                         >
                             + Kitap Ekle
                         </Button>
@@ -143,7 +170,7 @@ export default function AdayPage() {
                     <div className="flex gap-4 mb-4">
                         <Button
                             onClick={() => setModalType("atif")}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 lg:w-2/7"
                         >
                             + Atıf Ekle
                         </Button>
@@ -156,7 +183,7 @@ export default function AdayPage() {
                     <div className="flex gap-4 mb-4">
                         <Button
                             onClick={() => setModalType("egitim")}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 lg:w-2/7"
                         >
                             + Eğitim Faaliyeti Ekle
                         </Button>
@@ -167,7 +194,7 @@ export default function AdayPage() {
                     <div className="flex gap-4 mb-4">
                         <Button
                             onClick={() => setModalType("tez")}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 lg:w-2/7"
                         >
                             + Tez Ekle
                         </Button>
@@ -178,9 +205,64 @@ export default function AdayPage() {
                     <div className="flex gap-4 mb-4">
                         <Button
                             onClick={() => setModalType("patent")}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 lg:w-2/7"
                         >
                             + Patent Ekle
+                        </Button>
+                    </div>
+                    <hr />
+                    <br />
+                    <h2 className="text-xl font-bold mb-3">Araştırma Projeleri</h2>
+                    <div className="flex gap-4 mb-4">
+                        <Button
+                            onClick={() => setModalType("proje")}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 lg:w-2/7"
+                        >
+                            + Araştırma Projesi Ekle
+                        </Button>
+                    </div>
+                    <hr />
+                    <br />
+                    <h2 className="text-xl font-bold mb-3">Editörlük, Yayın Kurulu Üyeliği ve Hakemlik Faaliyetleri </h2>
+                    <div className="flex gap-4 mb-4">
+                        <Button
+                            onClick={() => setModalType("editorluk")}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 lg:w-2/7"
+                        >
+                            + Faaliyet veya üyelik ekle
+                        </Button>
+                    </div>
+                    <hr />
+                    <br />
+                    <h2 className="text-xl font-bold mb-3">Ödüller </h2>
+                    <div className="flex gap-4 mb-4">
+                        <Button
+                            onClick={() => setModalType("oduller")}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 lg:w-2/7"
+                        >
+                            + Ödül Ekle
+                        </Button>
+                    </div>
+                    <hr />
+                    <br />
+                    <h2 className="text-xl font-bold mb-3">İdari Görevler ve Üniversite Katılım Faaliyetleri </h2>
+                    <div className="flex gap-4 mb-4">
+                        <Button
+                            onClick={() => setModalType("idarigorev")}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 lg:w-2/7"
+                        >
+                            + Görev ve Faaliyet Ekle
+                        </Button>
+                    </div>
+                    <hr />
+                    <br />
+                    <h2 className="text-xl font-bold mb-3">Güzel Sanatlar Faaliyetleri</h2>
+                    <div className="flex gap-4 mb-4">
+                        <Button
+                            onClick={() => setModalType("guzelsanatlar")}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 lg:w-2/7"
+                        >
+                            + Güzel Sanatlar Faaliyeti Ekle
                         </Button>
                     </div>
                     <Modal
@@ -190,7 +272,6 @@ export default function AdayPage() {
                     >
                         <MakaleForm onSave={handleMakaleSave} />
                     </Modal>
-
                     <Modal
                         isOpen={modalType === "toplanti"}
                         onClose={() => setModalType(null)}
@@ -233,9 +314,42 @@ export default function AdayPage() {
                     >
                         <PatentForm onSave={handlePatentSave} />
                     </Modal>
-
-
+                    <Modal
+                        isOpen={modalType === "proje"}
+                        onClose={() => setModalType(null)}
+                        title="Araştırma Projesi Ekle"
+                    >
+                        <ArastirmaProjesiForm onSave={handleArastirmaProjesiSave} />
+                    </Modal>
+                    <Modal
+                        isOpen={modalType === "editorluk"}
+                        onClose={() => setModalType(null)}
+                        title="Editörlük, Yayın Kurulu Üyeliği ve Hakemlik Faaliyetleri Ekle"
+                    >
+                        <EditorlukForm onSave={handleEditorlukSave} />
+                    </Modal>
+                    <Modal
+                        isOpen={modalType === "oduller"}
+                        onClose={() => setModalType(null)}
+                        title="Ödül Ekle"
+                    >
+                        <OdullerForm onSave={handleOdullerSave} />
+                    </Modal>
                 </div>
+                <Modal
+                    isOpen={modalType === "idarigorev"}
+                    onClose={() => setModalType(null)}
+                    title="İdari Görevler Ekle"
+                >
+                    <IdariGorevlerForm onSave={handleIdariGorevlerSave} />
+                </Modal>
+                <Modal
+                    isOpen={modalType === "guzelsanatlar"}
+                    onClose={() => setModalType(null)}
+                    title="Güzel Sanatlar Faaliyetleri Ekle"
+                >
+                    <GuzelSanatlarForm onSave={handleGuzelSanatlarSave} />
+                </Modal>
             </div>
         </main>
     );
