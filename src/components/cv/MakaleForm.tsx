@@ -1,28 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-// Kategoriler ile IndeksTuru enum'ını eşleyeceğimiz map
-const indeksMap: { [key: string]: "Q1" | "Q2" | "Q3" | "Q4" | "ESCI" | "SCOPUS" | "DIGER_ULUSLARARASI" | "ULAKBIM" | "ULUSAL" } = {
-    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q1 olarak taranan dergide)": "Q1",
-    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q2 olarak taranan dergide)": "Q2",
-    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q3 olarak taranan dergide)": "Q3",
-    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q4 olarak taranan dergide)": "Q4",
+const indeksMap: { [key: string]: "SSCI_Q1" | "SSCI_Q2" | "SSCI_Q3" | "SSCI_Q4" | "ESCI" | "SCOPUS" | "DIGER_ULUSLARARASI" | "ULAKBIM" | "DIGER_ULUSAL" } = {
+    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q1 olarak taranan dergide)": "SSCI_Q1",
+    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q2 olarak taranan dergide)": "SSCI_Q2",
+    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q3 olarak taranan dergide)": "SSCI_Q3",
+    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q4 olarak taranan dergide)": "SSCI_Q4",
     "ESCI tarafından taranan dergilerde yayımlanmış makale": "ESCI",
     "Scopus tarafından taranan dergilerde yayımlanmış makale": "SCOPUS",
     "Uluslararası diğer indekslerde taranan dergilerde yayımlanmış makale": "DIGER_ULUSLARARASI",
     "ULAKBİM TR Dizin tarafından taranan ulusal hakemli dergilerde yayımlanmış makale": "ULAKBIM",
-    "8. madde dışındaki ulusal hakemli dergilerde yayımlanmış makale": "ULUSAL",
+    "8. madde dışındaki ulusal hakemli dergilerde yayımlanmış makale": "DIGER_ULUSAL",
 };
-
-interface Makale {
-    yazarAdi: string;
-    makaleAdi: string;
-    dergiAdi: string;
-    ciltNo: string;
-    sayfaSayisi: string;
-    yil: string;
-    kategori: string;
-}
 
 interface MakaleFormProps {
     onSave: (data: any) => void;
@@ -41,8 +30,7 @@ const makaleKategorileri = [
 ];
 
 export default function MakaleForm({ onSave }: MakaleFormProps) {
-    const [makale, setMakale] = useState<Makale>({
-        yazarAdi: "",
+    const [makale, setMakale] = useState({
         makaleAdi: "",
         dergiAdi: "",
         ciltNo: "",
@@ -50,6 +38,16 @@ export default function MakaleForm({ onSave }: MakaleFormProps) {
         yil: "",
         kategori: makaleKategorileri[0],
     });
+
+    const [kullaniciId, setKullaniciId] = useState<number | null>(null);
+
+    // Kullanıcı ID'sini localStorage'dan al
+    useEffect(() => {
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+            setKullaniciId(parseInt(userId)); // Kullanıcı ID'sini set et
+        }
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -62,8 +60,13 @@ export default function MakaleForm({ onSave }: MakaleFormProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (!kullaniciId) {
+            alert("Kullanıcı ID'si bulunamadı.");
+            return;
+        }
+
         const payload = {
-            kullaniciId: 1, // Örnek kullanıcı ID (auth ile dinamikleştirilebilir)
+            kullaniciId,
             yayinAdi: makale.makaleAdi,
             dergiAdi: makale.dergiAdi,
             ciltNo: makale.ciltNo || null,
@@ -96,20 +99,10 @@ export default function MakaleForm({ onSave }: MakaleFormProps) {
     };
 
     return (
-        <form
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-4 w-full md:w-3/4 lg:w-2/3 xl:w-full p-6 bg-white rounded-lg shadow-lg"
-        >
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full p-6 bg-white rounded-lg shadow-lg">
             <h2 className="text-2xl font-semibold text-center">Makale Bilgileri</h2>
 
-            <input
-                type="text"
-                name="yazarAdi"
-                placeholder="Yazar Adı"
-                value={makale.yazarAdi}
-                onChange={handleChange}
-                className="border p-2 rounded"
-            />
+            
 
             <input
                 type="text"
@@ -156,8 +149,6 @@ export default function MakaleForm({ onSave }: MakaleFormProps) {
                 className="border p-2 rounded"
             />
             <br />
-            {/* Dropdown Menü */}
-            <h2 className="block font-semibold">Lütfen Kategori Seçiniz</h2>
             <select
                 name="kategori"
                 value={makale.kategori}

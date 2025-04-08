@@ -32,9 +32,10 @@ export function LoginForm() {
         return;
       }
 
-      // Token'ı kaydet
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userRole", data.user.role); // yönlendirme için yedek
+      // Kullanıcı ID'sini ve diğer verileri localStorage'a kaydet
+      localStorage.setItem("token", data.token); // JWT token
+      localStorage.setItem("userRole", data.user.role); // Kullanıcı rolü
+      localStorage.setItem("userId", data.user.id.toString()); // Kullanıcı ID'si
 
       // Gelen role backend'den alınır, frontend'de setRole kullanılmaz!
       const backendRole = data.user.role;
