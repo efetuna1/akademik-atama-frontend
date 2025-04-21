@@ -1,31 +1,66 @@
-// components/cv/EgitimForm.tsx
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 interface EgitimFormProps {
     onSave: (data: any) => void;
 }
 
+const kategoriListesi = [
+    { value: "1", label: "Önlisans / Lisans Dersleri" },
+    { value: "2", label: "Önlisans / Lisans Dersleri (Yabancı dilde)" },
+    { value: "3", label: "Lisansüstü Dersleri" },
+    { value: "4", label: "Lisansüstü Dersleri (Yabancı dilde)" },
+];
+
 const EgitimForm: React.FC<EgitimFormProps> = ({ onSave }) => {
     const [dersAdi, setDersAdi] = useState("");
     const [programAdi, setProgramAdi] = useState("");
     const [donem, setDonem] = useState("");
     const [yil, setYil] = useState("");
-    const [secenek, setSecenek] = useState("");
+    const [kategori, setKategori] = useState("");
+    const [kullaniciId, setKullaniciId] = useState<number | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    useEffect(() => {
+        const id = localStorage.getItem("userId");
+        if (id) setKullaniciId(parseInt(id));
+    }, []);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (!kullaniciId) {
+            alert("Kullanıcı ID bulunamadı.");
+            return;
+        }
+
         const data = {
+            kullaniciId,
             dersAdi,
             programAdi,
             donem,
             yil,
-            secenek,
+            kategori,
         };
 
-        onSave(data);
+        try {
+            const response = await fetch("http://localhost:3001/api/egitimEkle", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || "Sunucu hatası.");
+            }
+
+            const result = await response.json();
+            console.log("Eğitim faaliyeti kaydedildi:", result);
+            onSave(result);
+        } catch (err) {
+            console.error("Eğitim faaliyeti kaydı hatası:", err);
+            alert("Eğitim faaliyeti kaydedilemedi.");
+        }
     };
 
     return (
@@ -61,21 +96,20 @@ const EgitimForm: React.FC<EgitimFormProps> = ({ onSave }) => {
                 className="border p-2 rounded"
             />
 
-            <div>
-                <label htmlFor="secenek" className="block font-semibold mt-4">Kategori Seçiniz</label>
-                <select
-                    id="secenek"
-                    value={secenek}
-                    onChange={(e) => setSecenek(e.target.value)}
-                    className="border p-2 rounded w-full mt-2"
-                >
-                    <option value="">Seçiniz</option>
-                    <option value="1">Önlisans / Lisans Dersleri</option>
-                    <option value="2">Önlisans / Lisans Dersleri (Yabancı dilde)</option>
-                    <option value="3">Lisansüstü Dersleri</option>
-                    <option value="4">Lisansüstü Dersleri (Yabancı dilde)</option>
-                </select>
-            </div>
+            <label htmlFor="kategori" className="block font-semibold mt-4">Kategori Seçiniz</label>
+            <select
+                id="kategori"
+                value={kategori}
+                onChange={(e) => setKategori(e.target.value)}
+                className="border p-2 rounded w-full mt-2"
+            >
+                <option value="">Seçiniz</option>
+                {kategoriListesi.map(k => (
+                    <option key={k.value} value={k.value}>
+                        {k.label}
+                    </option>
+                ))}
+            </select>
 
             <div className="mt-4 flex justify-center">
                 <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">

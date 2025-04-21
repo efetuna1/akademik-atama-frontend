@@ -1,16 +1,26 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-const indeksMap: { [key: string]: "SCI_E_SSCI_AHCI" | "E_SCI" | "ULUSLARARASI" | "ULUSAL" | "GUZEL_SANATLAR_ULUSLARARASI" | "GUZEL_SANATLAR_ULUSAL" } = {
-    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q1 olarak taranan dergide)": "SCI_E_SSCI_AHCI",
-    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q2 olarak taranan dergide)": "SCI_E_SSCI_AHCI",
-    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q3 olarak taranan dergide)": "SCI_E_SSCI_AHCI",
-    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q4 olarak taranan dergide)": "SCI_E_SSCI_AHCI",
-    "ESCI tarafından taranan dergilerde yayımlanmış makale": "E_SCI",
-    "Scopus tarafından taranan dergilerde yayımlanmış makale": "ULUSLARARASI",
-    "Uluslararası diğer indekslerde taranan dergilerde yayımlanmış makale": "ULUSLARARASI",
-    "ULAKBİM TR Dizin tarafından taranan ulusal hakemli dergilerde yayımlanmış makale": "ULUSAL",
-    "8. madde dışındaki ulusal hakemli dergilerde yayımlanmış makale": "ULUSAL",
+const indeksMap: {
+    [key: string]:
+    | "SCI_E_SSCI_AHCI"
+    | "E_SCI"
+    | "ULUSLARARASI"
+    | "ULUSAL"
+    | "GUZEL_SANATLAR_ULUSLARARASI"
+    | "GUZEL_SANATLAR_ULUSAL";
+} = {
+    "SCI-E, SSCI ve AHCI tarafından taranan dergilerde; Uluslararası yayınevleri tarafından yayımlanmış kitaplarda yayımlanan ve adayın yazar olarak yer almadığı yayınlardan her birinde, metin içindeki atıf sayısına bakılmaksızın adayın atıf yapılan her eseri için": "SCI_E_SSCI_AHCI",
+
+    "E-SCI tarafından taranan dergilerde ve adayın yazar olarak yer almadığı yayınlardan her birinde, metin içindeki atıf sayısına bakılmaksızın adayın atıf yapılan her eseri için": "E_SCI",
+
+    "SCI-E, SSCI, AHCI, E-SCI dışındaki diğer uluslararası indeksler tarafından taranan dergilerde; Uluslararası yayınevleri tarafından yayımlanmış kitaplarda bölüm yazarı olarak yayımlanan ve adayın yazar olarak yer almadığı yayınlardan her birinde, metin içindeki atıf sayısına bakılmaksızın adayın atıf yapılan her eseri için": "ULUSLARARASI",
+
+    "Ulusal hakemli dergilerde; Ulusal yayınevleri tarafından yayımlanmış kitaplarda yayımlanan ve adayın yazar olarak yer almadığı yayınlardan her birinde, metin içindeki atıf sayısına bakılmaksızın adayın atıf yapılan her eseri için": "ULUSAL",
+
+    "Güzel sanatlardaki eserlerin uluslararası kaynak veya yayın organlarında yer alması veya gösterime ya da dinletime girmesi": "GUZEL_SANATLAR_ULUSLARARASI",
+
+    "Güzel sanatlardaki eserlerin ulusal kaynak veya yayın organlarında yer alması veya gösterime ya da dinletime girmesi": "GUZEL_SANATLAR_ULUSAL",
 };
 
 interface AtifFormProps {
@@ -18,16 +28,14 @@ interface AtifFormProps {
 }
 
 const atifKategorileri = [
-    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q1 olarak taranan dergide)",
-    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q2 olarak taranan dergide)",
-    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q3 olarak taranan dergide)",
-    "SCI-E, SSCI veya AHCI kapsamındaki dergilerde yayımlanmış makale (Q4 olarak taranan dergide)",
-    "ESCI tarafından taranan dergilerde yayımlanmış makale",
-    "Scopus tarafından taranan dergilerde yayımlanmış makale",
-    "Uluslararası diğer indekslerde taranan dergilerde yayımlanmış makale",
-    "ULAKBİM TR Dizin tarafından taranan ulusal hakemli dergilerde yayımlanmış makale",
-    "8. madde dışındaki ulusal hakemli dergilerde yayımlanmış makale",
+    "SCI-E/SSCI/AHCI dergilerde yayımlanmış ve adaya atıf yapılan eser",
+    "E-SCI dergilerde yayımlanmış ve adaya atıf yapılan eser",
+    "Uluslararası indeksli dergilerde/kitap bölümlerinde yayımlanmış ve adaya atıf yapılan eser",
+    "Ulusal dergiler/kitaplarda yayımlanmış ve adaya atıf yapılan eser",
+    "Güzel sanatlar eserinin uluslararası kaynakta yer alması/gösterimi",
+    "Güzel sanatlar eserinin ulusal kaynakta yer alması/gösterimi",
 ];
+
 
 export default function AtifForm({ onSave }: AtifFormProps) {
     const [atif, setAtif] = useState({

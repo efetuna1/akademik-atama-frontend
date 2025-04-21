@@ -1,6 +1,4 @@
-// components/cv/PatentForm.tsx
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 interface PatentFormProps {
@@ -8,20 +6,63 @@ interface PatentFormProps {
 }
 
 const PatentForm: React.FC<PatentFormProps> = ({ onSave }) => {
-    const [patentAdi, setPatentAdi] = useState("");
-    const [yil, setYil] = useState("");
-    const [kategori, setKategori] = useState("");
+    const [form, setForm] = useState({
+        patentAdi: "",
+        yil: "",
+        kategori: "",
+    });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [kullaniciId, setKullaniciId] = useState<number | null>(null);
+
+    useEffect(() => {
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+            setKullaniciId(parseInt(userId));
+        }
+    }, []);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const data = {
-            patentAdi,
-            yil,
-            kategori,
+        if (!kullaniciId) {
+            alert("Kullanıcı ID'si bulunamadı.");
+            return;
+        }
+
+        const payload = {
+            ...form,
+            kullaniciId,
         };
 
-        onSave(data);
+        try {
+            const response = await fetch("http://localhost:3001/api/patentEkle", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || "Sunucu hatası oluştu.");
+            }
+
+            const result = await response.json();
+            console.log("Patent kaydedildi:", result);
+            onSave(result);
+        } catch (error) {
+            console.error("Patent eklenirken hata oluştu:", error);
+            alert("Patent kaydedilemedi. Lütfen tekrar deneyiniz.");
+        }
     };
 
     return (
@@ -30,25 +71,27 @@ const PatentForm: React.FC<PatentFormProps> = ({ onSave }) => {
 
             <input
                 type="text"
+                name="patentAdi"
                 placeholder="Patent Adı"
-                value={patentAdi}
-                onChange={(e) => setPatentAdi(e.target.value)}
+                value={form.patentAdi}
+                onChange={handleChange}
                 className="border p-2 rounded"
             />
             <input
                 type="text"
+                name="yil"
                 placeholder="Yılı"
-                value={yil}
-                onChange={(e) => setYil(e.target.value)}
+                value={form.yil}
+                onChange={handleChange}
                 className="border p-2 rounded"
             />
 
             <div>
                 <label htmlFor="kategori" className="block font-semibold mt-4">Kategori</label>
                 <select
-                    id="kategori"
-                    value={kategori}
-                    onChange={(e) => setKategori(e.target.value)}
+                    name="kategori"
+                    value={form.kategori}
+                    onChange={handleChange}
                     className="border p-2 rounded w-full mt-2"
                 >
                     <option value="">Seçiniz</option>

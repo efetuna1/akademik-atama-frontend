@@ -1,6 +1,4 @@
-// components/cv/OdullerForm.tsx
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 interface OdullerFormProps {
@@ -8,20 +6,63 @@ interface OdullerFormProps {
 }
 
 const OdullerForm: React.FC<OdullerFormProps> = ({ onSave }) => {
-    const [kurumAdi, setKurumAdi] = useState("");
-    const [yil, setYil] = useState("");
-    const [secenek, setSecenek] = useState("");
+    const [form, setForm] = useState({
+        kurumAdi: "",
+        yil: "",
+        secenek: "",
+    });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [kullaniciId, setKullaniciId] = useState<number | null>(null);
+
+    useEffect(() => {
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+            setKullaniciId(parseInt(userId));
+        }
+    }, []);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const data = {
-            kurumAdi,
-            yil,
-            secenek,
+        if (!kullaniciId) {
+            alert("Kullanıcı ID'si bulunamadı.");
+            return;
+        }
+
+        const payload = {
+            ...form,
+            kullaniciId,
         };
 
-        onSave(data);
+        try {
+            const response = await fetch("http://localhost:3001/api/odulEkle", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || "Sunucu hatası oluştu.");
+            }
+
+            const result = await response.json();
+            console.log("Ödül başarıyla kaydedildi:", result);
+            onSave(result);
+        } catch (error) {
+            console.error("Ödül kaydı sırasında hata oluştu:", error);
+            alert("Ödül kaydedilemedi. Lütfen tekrar deneyin.");
+        }
     };
 
     return (
@@ -30,25 +71,27 @@ const OdullerForm: React.FC<OdullerFormProps> = ({ onSave }) => {
 
             <input
                 type="text"
+                name="kurumAdi"
                 placeholder="Ödülün Veren Kurul/Kurumun Adı"
-                value={kurumAdi}
-                onChange={(e) => setKurumAdi(e.target.value)}
+                value={form.kurumAdi}
+                onChange={handleChange}
                 className="border p-2 rounded"
             />
             <input
                 type="text"
+                name="yil"
                 placeholder="Yılı"
-                value={yil}
-                onChange={(e) => setYil(e.target.value)}
+                value={form.yil}
+                onChange={handleChange}
                 className="border p-2 rounded"
             />
 
             <div>
                 <label htmlFor="secenek" className="block font-semibold mt-4">Kategori Seçiniz</label>
                 <select
-                    id="secenek"
-                    value={secenek}
-                    onChange={(e) => setSecenek(e.target.value)}
+                    name="secenek"
+                    value={form.secenek}
+                    onChange={handleChange}
                     className="border p-2 rounded w-full mt-2"
                 >
                     <option value="">Seçiniz</option>
@@ -58,19 +101,19 @@ const OdullerForm: React.FC<OdullerFormProps> = ({ onSave }) => {
                     <option value="4">TÜBİTAK Tarafından Verilen Teşvik Ödülü (Yayın Teşvik Ödülü Hariç)</option>
                     <option value="5">TÜBA Tarafından Verilen GEBİP ve TESEP Ödülleri</option>
                     <option value="6">Sürekli ve Periyodik Olarak Jürili Ulusal Bilim ve Sanat Ödülleri</option>
-                    <option value="7">Sürekli ve Periyodik Olarak Verilen ve Bir Jüri Değerlendirmesine Tabi Olmayan Uluslararası/Ulusal Ödüller</option>
+                    <option value="7">Jürili Olmayan Uluslararası/Ulusal Ödüller</option>
                     <option value="8">Uluslararası Hakemli Yarışmalarda Birincilik Derecesi</option>
                     <option value="9">Uluslararası Hakemli Yarışmalarda İkincilik Derecesi</option>
                     <option value="10">Uluslararası Hakemli Yarışmalarda Üçüncülük Derecesi</option>
                     <option value="11">Ulusal Hakemli Yarışmalarda Birincilik Derecesi</option>
                     <option value="12">Ulusal Hakemli Yarışmalarda İkincilik Derecesi</option>
-                    <option value="13">Ulusal Hakemli Yarışmalarda Üçüncülük Ödül Derecesi</option>
+                    <option value="13">Ulusal Hakemli Yarışmalarda Üçüncülük Derecesi</option>
                     <option value="14">Uluslararası Bilimsel Toplantılarda Alınan Ödüller</option>
                     <option value="15">Ulusal Bilimsel Toplantılarda Alınan Ödüller</option>
-                    <option value="16">Sanat, Tasarım ve Mimarlık Alanlarında Uluslararası Hakemli Yarışmalarda Alınan Ödüller</option>
-                    <option value="17">Sanat, Tasarım ve Mimarlık Alanlarında Ulusal Hakemli Yarışmalarda Alınan Ödüller</option>
-                    <option value="18">KOU Kurumsal Ödülleri (Üniversite Genelinde İlgili Alanda Dereceye Girenler)</option>
-                    <option value="19">Kitap veya Makale Gibi Bilimsel Eserlere Atfedilen Ödüller</option>
+                    <option value="16">Sanat, Tasarım ve Mimarlık - Uluslararası Yarışmalar</option>
+                    <option value="17">Sanat, Tasarım ve Mimarlık - Ulusal Yarışmalar</option>
+                    <option value="18">KOU Kurumsal Ödülleri</option>
+                    <option value="19">Bilimsel Eserlere Atfedilen Ödüller</option>
                 </select>
             </div>
 

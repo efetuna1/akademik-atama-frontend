@@ -1,9 +1,38 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-interface GuzelSanatlarFormProps {
-    onSave: (data: any) => void;
+interface GuzelSanatlarData {
+    faaliyetAdi: string;
+    yil: string;
+    secenek: string;
 }
+
+interface GuzelSanatlarFormProps {
+    onSave: (data: GuzelSanatlarData) => void;
+}
+const handleGuzelSanatlarSave = async (data: GuzelSanatlarData) => {
+    try {
+        const response = await fetch("http://localhost:3001/api/guzelsanatEkle", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error("Bir hata oluştu");
+        }
+
+        const result = await response.json();
+        console.log("Veri başarıyla kaydedildi:", result);
+        // İsteğe bağlı: bildirim göster, formu sıfırla vs.
+
+    } catch (error) {
+        console.error("Hata:", error);
+        alert("Veri kaydedilemedi.");
+    }
+};
 
 const GuzelSanatlarForm: React.FC<GuzelSanatlarFormProps> = ({ onSave }) => {
     const [faaliyetAdi, setFaaliyetAdi] = useState("");
@@ -14,17 +43,23 @@ const GuzelSanatlarForm: React.FC<GuzelSanatlarFormProps> = ({ onSave }) => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (!faaliyetAdi || !yil || !secenek) {
+            alert("Lütfen tüm alanları doldurun.");
+            return;
+        }
+
         const data = {
             faaliyetAdi,
             yil,
             secenek,
         };
 
-        onSave(data);
+
     };
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full p-6 bg-white rounded-lg shadow-lg">
+            <GuzelSanatlarForm onSave={handleGuzelSanatlarSave} />
             <h2 className="text-2xl font-semibold text-center">Eğitim Öğretim Faaliyeti</h2>
             <input
                 type="text"
@@ -34,7 +69,7 @@ const GuzelSanatlarForm: React.FC<GuzelSanatlarFormProps> = ({ onSave }) => {
                 className="border p-2 rounded"
             />
             <input
-                type="text"
+                type="number"
                 placeholder="Yılı"
                 value={yil}
                 onChange={(e) => setYil(e.target.value)}
