@@ -1,6 +1,4 @@
-// components/cv/TezForm.tsx
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 interface TezFormProps {
@@ -8,24 +6,65 @@ interface TezFormProps {
 }
 
 const TezForm: React.FC<TezFormProps> = ({ onSave }) => {
-    const [ogrenciAdi, setOgrenciAdi] = useState("");
-    const [tezAdi, setTezAdi] = useState("");
-    const [enstitu, setEnstitu] = useState("");
-    const [yil, setYil] = useState("");
-    const [kategori, setKategori] = useState("");
+    const [form, setForm] = useState({
+        ogrenciAdi: "",
+        tezAdi: "",
+        enstitu: "",
+        yil: "",
+        kategori: "",
+    });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [kullaniciId, setKullaniciId] = useState<number | null>(null);
+
+    useEffect(() => {
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+            setKullaniciId(parseInt(userId));
+        }
+    }, []);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const data = {
-            ogrenciAdi,
-            tezAdi,
-            enstitu,
-            yil,
-            kategori,
+        if (!kullaniciId) {
+            alert("Kullanıcı ID'si bulunamadı.");
+            return;
+        }
+
+        const payload = {
+            ...form,
+            kullaniciId,
         };
 
-        onSave(data);
+        try {
+            const response = await fetch("http://localhost:3001/api/tezEkle", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || "Sunucu hatası oluştu.");
+            }
+
+            const result = await response.json();
+            console.log("Tez kaydedildi:", result);
+            onSave(result);
+        } catch (error) {
+            console.error("Tez eklenirken hata oluştu:", error);
+            alert("Tez kaydedilemedi. Lütfen tekrar deneyiniz.");
+        }
     };
 
     return (
@@ -34,39 +73,43 @@ const TezForm: React.FC<TezFormProps> = ({ onSave }) => {
 
             <input
                 type="text"
+                name="ogrenciAdi"
                 placeholder="Öğrenci Adı"
-                value={ogrenciAdi}
-                onChange={(e) => setOgrenciAdi(e.target.value)}
+                value={form.ogrenciAdi}
+                onChange={handleChange}
                 className="border p-2 rounded"
             />
             <input
                 type="text"
+                name="tezAdi"
                 placeholder="Tezin Adı"
-                value={tezAdi}
-                onChange={(e) => setTezAdi(e.target.value)}
+                value={form.tezAdi}
+                onChange={handleChange}
                 className="border p-2 rounded"
             />
             <input
                 type="text"
+                name="enstitu"
                 placeholder="Enstitüsü"
-                value={enstitu}
-                onChange={(e) => setEnstitu(e.target.value)}
+                value={form.enstitu}
+                onChange={handleChange}
                 className="border p-2 rounded"
             />
             <input
                 type="text"
+                name="yil"
                 placeholder="Yılı"
-                value={yil}
-                onChange={(e) => setYil(e.target.value)}
+                value={form.yil}
+                onChange={handleChange}
                 className="border p-2 rounded"
             />
 
             <div>
                 <label htmlFor="kategori" className="block font-semibold mt-4">Kategori</label>
                 <select
-                    id="kategori"
-                    value={kategori}
-                    onChange={(e) => setKategori(e.target.value)}
+                    name="kategori"
+                    value={form.kategori}
+                    onChange={handleChange}
                     className="border p-2 rounded w-full mt-2"
                 >
                     <option value="">Seçiniz</option>

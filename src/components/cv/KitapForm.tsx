@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 interface KitapFormProps {
@@ -6,100 +6,128 @@ interface KitapFormProps {
 }
 
 const KitapForm: React.FC<KitapFormProps> = ({ onSave }) => {
-    const [yazarAdi, setYazarAdi] = useState("");
-    const [kitapAdi, setKitapAdi] = useState("");
-    const [yayinevi, setYayinevi] = useState("");
-    const [baskiSayisi, setBaskiSayisi] = useState("");
-    const [yayimYeri, setYayimYeri] = useState("");
-    const [yil, setYil] = useState("");
-    const [secenek, setSecenek] = useState("");
+    const [kitap, setKitap] = useState({
+        yazarAdi: "",
+        kitapAdi: "",
+        yayinevi: "",
+        baskiSayisi: "",
+        yayimYeri: "",
+        yil: "",
+        secenek: "",
+    });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [kullaniciId, setKullaniciId] = useState<number | null>(null);
+
+    useEffect(() => {
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+            setKullaniciId(parseInt(userId));
+        }
+    }, []);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setKitap((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const data = {
-            yazarAdi,
-            kitapAdi,
-            yayinevi,
-            baskiSayisi,
-            yayimYeri,
-            yil,
-            secenek,
+        if (!kullaniciId) {
+            alert("Kullanıcı ID'si bulunamadı.");
+            return;
+        }
+
+        const payload = {
+            ...kitap,
+            kullaniciId,
         };
 
-        onSave(data);
+        try {
+            const response = await fetch("http://localhost:3001/api/kitapEkle", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Sunucu hatası");
+            }
+
+            const result = await response.json();
+            console.log("Kitap başarıyla kaydedildi:", result);
+            onSave(result);
+        } catch (error) {
+            console.error("Kitap gönderilirken hata oluştu:", error);
+            alert("Kitap kaydedilemedi. Lütfen tekrar deneyin.");
+        }
     };
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full md:w-3/4 lg:w-2/3 xl:w-full p-6 bg-white rounded-lg shadow-lg">
             <h2 className="text-2xl font-semibold text-center">Kitap Bilgileri</h2>
-            <div>
-                <input
-                    type="text"
-                    id="yazarAdi"
-                    value={yazarAdi}
-                    placeholder="Yazar Adı"
-                    onChange={(e) => setYazarAdi(e.target.value)}
-                    className="border p-2 rounded lg:w-full"
-                />
-            </div>
-            <div>
-                <input
-                    type="text"
-                    id="kitapAdi"
-                    placeholder="Kitap Adı"
-                    value={kitapAdi}
-                    onChange={(e) => setKitapAdi(e.target.value)}
-                    className="border p-2 rounded lg:w-full"
-                />
-            </div>
-            <div>
-                <input
-                    type="text"
-                    id="yayinevi"
-                    placeholder="Yayınevi"
-                    value={yayinevi}
-                    onChange={(e) => setYayinevi(e.target.value)}
-                    className="border p-2 rounded lg:w-full"
-                />
-            </div>
-            <div>
-                <input
-                    type="text"
-                    id="baskiSayisi"
-                    placeholder="Baskı Sayısı"
-                    value={baskiSayisi}
-                    onChange={(e) => setBaskiSayisi(e.target.value)}
-                    className="border p-2 rounded lg:w-full"
-                />
-            </div>
-            <div>
-                <input
-                    type="text"
-                    id="yayimYeri"
-                    placeholder="Yayımlandığı Yer"
-                    value={yayimYeri}
-                    onChange={(e) => setYayimYeri(e.target.value)}
-                    className="border p-2 rounded lg:w-full"
-                />
-            </div>
-            <div>
-                <input
-                    type="text"
-                    id="yil"
-                    placeholder="Yıl"
-                    value={yil}
-                    onChange={(e) => setYil(e.target.value)}
-                    className="border p-2 rounded lg:w-full"
-                />
-            </div>
+
+            <input
+                type="text"
+                name="yazarAdi"
+                placeholder="Yazar Adı"
+                value={kitap.yazarAdi}
+                onChange={handleChange}
+                className="border p-2 rounded lg:w-full"
+            />
+            <input
+                type="text"
+                name="kitapAdi"
+                placeholder="Kitap Adı"
+                value={kitap.kitapAdi}
+                onChange={handleChange}
+                className="border p-2 rounded lg:w-full"
+            />
+            <input
+                type="text"
+                name="yayinevi"
+                placeholder="Yayınevi"
+                value={kitap.yayinevi}
+                onChange={handleChange}
+                className="border p-2 rounded lg:w-full"
+            />
+            <input
+                type="text"
+                name="baskiSayisi"
+                placeholder="Baskı Sayısı"
+                value={kitap.baskiSayisi}
+                onChange={handleChange}
+                className="border p-2 rounded lg:w-full"
+            />
+            <input
+                type="text"
+                name="yayimYeri"
+                placeholder="Yayımlandığı Yer"
+                value={kitap.yayimYeri}
+                onChange={handleChange}
+                className="border p-2 rounded lg:w-full"
+            />
+            <input
+                type="text"
+                name="yil"
+                placeholder="Yıl"
+                value={kitap.yil}
+                onChange={handleChange}
+                className="border p-2 rounded lg:w-full"
+            />
 
             <div>
                 <label htmlFor="secenek" className="block font-semibold mt-4">Lütfen Kategori Seçiniz</label>
                 <select
-                    id="secenek"
-                    value={secenek}
-                    onChange={(e) => setSecenek(e.target.value)}
+                    name="secenek"
+                    value={kitap.secenek}
+                    onChange={handleChange}
                     className="border p-2 rounded lg:w-full mt-2"
                 >
                     <option value="">Seçiniz</option>
@@ -114,7 +142,7 @@ const KitapForm: React.FC<KitapFormProps> = ({ onSave }) => {
                 </select>
             </div>
 
-            <div className="mt-4 flex justify-center gap-4">
+            <div className="mt-4 flex justify-center">
                 <Button
                     type="submit"
                     className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"

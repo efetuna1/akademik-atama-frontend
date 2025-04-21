@@ -1,113 +1,156 @@
-// components/cv/ArastirmaProjesiForm.tsx
-
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 interface ArastirmaProjesiFormProps {
     onSave: (data: any) => void;
 }
 
-const ArastirmaProjesiForm: React.FC<ArastirmaProjesiFormProps> = ({ onSave }) => {
-    const [projeAdi, setProjeAdi] = useState("");
-    const [projeNumarasi, setProjeNumarasi] = useState("");
-    const [kurumAdi, setKurumAdi] = useState("");
-    const [yil, setYil] = useState("");
-    const [secenek, setSecenek] = useState("");
+const kategoriListesi = [
+    "AB Çerçeve Programı/NSF/ERC Bilimsel Araştırma Projesinde Koordinatör/Alt Koordinatör Olmak",
+    "AB Çerçeve Programı/NSF/ERC Bilimsel Araştırma Projesinde Yürütücü Olmak",
+    "AB Çerçeve Programı/NSF/ERC Bilimsel Araştırma Projesinde Araştırmacı Olmak",
+    "AB dışı Uluslararası Destekli Projede Koordinatör/Alt Koordinatör Olmak",
+    "AB dışı Uluslararası Destekli Projede Yürütücü Olmak",
+    "AB dışı Uluslararası Destekli Projede Araştırmacı Olmak",
+    "AB dışı Uluslararası Destekli Projede Danışman Olmak",
+    "TÜBİTAK ARGE/TÜSEB Projesi Yürütücüsü",
+    "Diğer TÜBİTAK Projesi Yürütücüsü",
+    "Kamu Kurumu Destekli Projede Yürütücü",
+    "Sanayi Projesinde Yürütücü",
+    "Özel Kuruluş Ar-Ge Projesinde Yürütücü",
+    "TÜBİTAK ARGE/TÜSEB Projesi Araştırmacı",
+    "Diğer TÜBİTAK Projesi Araştırmacı",
+    "Kamu Kurumu Destekli Projede Araştırmacı",
+    "Sanayi Projesinde Araştırmacı",
+    "Özel Kuruluş Ar-Ge Projesinde Araştırmacı",
+    "TÜBİTAK ARGE/TÜSEB Projesi Danışman",
+    "Diğer TÜBİTAK Projesi Danışman",
+    "Kamu Kurumu Destekli Projede Danışman",
+    "Sanayi Projesinde Danışman",
+    "Özel Kuruluş Ar-Ge Projesinde Danışman",
+    "BAP Projesi Yürütücüsü",
+    "BAP Projesi Araştırmacı",
+    "BAP Projesi Danışman",
+    "4+ Ay Yurtdışı Araştırma",
+    "4+ Ay Yurtiçi Araştırma",
+    "TÜBİTAK 2209/2242 Danışmanı"
+];
 
-    const handleSubmit = (e: React.FormEvent) => {
+export default function ArastirmaProjesiForm({ onSave }: ArastirmaProjesiFormProps) {
+    const [proje, setProje] = useState({
+        projeAdi: "",
+        projeNumarasi: "",
+        kurumAdi: "",
+        yil: "",
+        kategori: kategoriListesi[0],
+    });
+
+    const [kullaniciId, setKullaniciId] = useState<number | null>(null);
+
+    useEffect(() => {
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+            setKullaniciId(parseInt(userId));
+        }
+    }, []);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setProje((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const data = {
-            projeAdi,
-            projeNumarasi,
-            kurumAdi,
-            yil,
-            secenek,
+        if (!kullaniciId) {
+            alert("Kullanıcı ID'si bulunamadı.");
+            return;
+        }
+
+        const payload = {
+            kullaniciId,
+            ...proje,
         };
 
-        onSave(data);
+        try {
+            const response = await fetch("http://localhost:3001/api/arastirmaProjesiEkle", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Sunucu hatası");
+            }
+
+            const result = await response.json();
+            console.log("Proje başarıyla kaydedildi:", result);
+            onSave(result);
+        } catch (error) {
+            console.error("Proje gönderilirken hata oluştu:", error);
+            alert("Proje kaydedilemedi. Lütfen tekrar deneyin.");
+        }
     };
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold text-center">Araştırma Projesi</h2>
+            <h2 className="text-2xl font-semibold text-center">Araştırma Projesi Bilgileri</h2>
 
             <input
                 type="text"
+                name="projeAdi"
                 placeholder="Projenin Adı"
-                value={projeAdi}
-                onChange={(e) => setProjeAdi(e.target.value)}
+                value={proje.projeAdi}
+                onChange={handleChange}
                 className="border p-2 rounded"
             />
             <input
                 type="text"
+                name="projeNumarasi"
                 placeholder="Proje Numarası"
-                value={projeNumarasi}
-                onChange={(e) => setProjeNumarasi(e.target.value)}
+                value={proje.projeNumarasi}
+                onChange={handleChange}
                 className="border p-2 rounded"
             />
             <input
                 type="text"
-                placeholder="Projenin Yürütüldüğü Kurumun Adı"
-                value={kurumAdi}
-                onChange={(e) => setKurumAdi(e.target.value)}
+                name="kurumAdi"
+                placeholder="Yürütüldüğü Kurum"
+                value={proje.kurumAdi}
+                onChange={handleChange}
                 className="border p-2 rounded"
             />
             <input
                 type="text"
+                name="yil"
                 placeholder="Yılı"
-                value={yil}
-                onChange={(e) => setYil(e.target.value)}
+                value={proje.yil}
+                onChange={handleChange}
                 className="border p-2 rounded"
             />
 
-            <div>
-                <label htmlFor="secenek" className="block font-semibold mt-4">Kategori Seçiniz</label>
-                <select
-                    id="secenek"
-                    value={secenek}
-                    onChange={(e) => setSecenek(e.target.value)}
-                    className="border p-2 rounded w-full mt-2"
-                >
-                    <option value="">Seçiniz</option>
-                    <option value="1">AB Çerçeve Programı/NSF/ERC Bilimsel Araştırma Projesinde Koordinatör/Alt Koordinatör Olmak</option>
-                    <option value="2">AB Çerçeve Programı/NSF/ERC Bilimsel Araştırma Projesinde Yürütücü Olmak</option>
-                    <option value="3">AB Çerçeve Programı/NSF/ERC Bilimsel Araştırma Projesinde Araştırmacı Olmak</option>
-                    <option value="4">AB Çerçeve Programı/NSF/ERC Bilimsel Araştırma Projeleri Dışındaki Uluslararası Destekli Bilimsel Araştırma Projelerinde Koordinatör/Alt Koordinatör Olmak</option>
-                    <option value="5">AB Çerçeve Programı/NSF/ERC Bilimsel Araştırma Projeleri Dışındaki Uluslararası Destekli Bilimsel Araştırma Projelerinde Yürütücü Olmak</option>
-                    <option value="6">AB Çerçeve Programı/NSF/ERC Bilimsel Araştırma Projeleri Dışındaki Uluslararası Destekli Bilimsel Araştırma Projelerinde Araştırmacı Olmak</option>
-                    <option value="7">AB Çerçeve Programı/NSF/ERC Bilimsel Araştırma Projeleri Dışındaki Uluslararası Destekli Bilimsel Araştırma Projelerinde Danışman Olmak</option>
-                    <option value="8">TÜBİTAK ARGE (ARDEB, TEYDEB) ve TÜSEB Projelerinde Yürütücü Olmak</option>
-                    <option value="9">Diğer TÜBİTAK Projelerinde Yürütücü Olmak</option>
-                    <option value="10">TÜBİTAK Dışındaki Diğer Kamu Kurumlarıyla Yapılan Bilimsel Araştırma Projelerinde Yürütücü Olmak</option>
-                    <option value="11">Sanayi Kuruluşları ile Yapılan Ar-Ge Projelerinde Yürütücü Olmak</option>
-                    <option value="12">Diğer Özel Kuruluşlar ile Yapılan Ar-Ge Projelerinde Yürütücü Olmak</option>
-                    <option value="13">TÜBİTAK ARGE (ARDEB, TEYDEB) ve TÜSEB Projelerinde Araştırmacı Olmak</option>
-                    <option value="14">Diğer TÜBİTAK Projelerinde Araştırmacı Olmak</option>
-                    <option value="15">TÜBİTAK Dışındaki Diğer Kamu Kurumlarıyla Yapılan Bilimsel Araştırma Projelerinde Araştırmacı Olmak</option>
-                    <option value="16">Sanayi Kuruluşları ile Yapılan Bilimsel Araştırma Projelerinde Araştırmacı Olmak</option>
-                    <option value="17">Diğer Özel Kuruluşlar ile Yapılan Bilimsel Araştırma Projelerinde Araştırmacı Olmak</option>
-                    <option value="18">TÜBİTAK ARGE (ARDEB, TEYDEB) ve TÜSEB Projelerinde Danışman Olmak</option>
-                    <option value="19">Diğer TÜBİTAK Projelerinde Danışman Olmak</option>
-                    <option value="20">TÜBİTAK Dışındaki Diğer Kamu Kurumlarıyla Yapılan Bilimsel Araştırma Projelerinde Danışman Olmak</option>
-                    <option value="21">Sanayi Kuruluşları ile Yapılan Ar-Ge Projelerinde Danışman Olmak</option>
-                    <option value="22">Diğer Özel Kuruluşlar ile Yapılan Ar-Ge Projelerinde Danışman Olmak</option>
-                    <option value="23">Üniversitelerin Bilimsel Araştırma Projeleri (BAP) Koordinatörlükleri Destekli Araştırma Projelerinde Yürütücü Olmak</option>
-                    <option value="24">Üniversitelerin Bilimsel Araştırma Projeleri (BAP) Koordinatörlükleri Destekli Araştırma Projelerinde Araştırmacı Olmak</option>
-                    <option value="25">Üniversitelerin Bilimsel Araştırma Projeleri (BAP) Koordinatörlükleri Destekli Araştırma Projelerinde Danışman Olmak</option>
-                    <option value="26">En Az Dört Aylık Yurtdışı Araştırma Çalışmasında Bulunmak</option>
-                    <option value="27">En Az Dört Aylık Yurtiçi Araştırma Çalışmasında Bulunmak</option>
-                    <option value="28">TÜBİTAK 2209-A, 2209-B, 2242 Projelerinde Danışman Olmak</option>
-                </select>
-            </div>
+            <select
+                name="kategori"
+                value={proje.kategori}
+                onChange={handleChange}
+                className="border p-2 rounded w-full"
+            >
+                {kategoriListesi.map((kategori, index) => (
+                    <option key={index} value={kategori}>
+                        {kategori}
+                    </option>
+                ))}
+            </select>
 
-            <div className="mt-4 flex justify-center">
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
-                    Kaydet
-                </Button>
-            </div>
+            <Button type="submit" className="bg-blue-500 text-white py-2 rounded hover:bg-blue-700">
+                Kaydet
+            </Button>
         </form>
     );
-};
-
-export default ArastirmaProjesiForm;
+}
