@@ -1,133 +1,189 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
-type ToplantiKategori =
-    | "Uluslararası bilimsel toplantılarda sözlü olarak sunulan, tam metni yayımlanmış"
-    | "Uluslararası bilimsel toplantılarda sözlü olarak sunulan, özet metni yayımlanmış"
-    | "Uluslararası bilimsel toplantılarda poster olarak sunulan çalışmalar"
-    | "Ulusal bilimsel toplantılarda sözlü, tam metni yayımlanmış"
-    | "Ulusal bilimsel toplantılarda sözlü, özet metni yayımlanmış"
-    | "Ulusal bilimsel toplantılarda poster olarak sunulan çalışmalar"
-    | "Uluslararası organizasyon, yürütme veya bilim kurulu üyeliği"
-    | "Ulusal organizasyon, yürütme veya bilim kurulu üyeliği"
-    | "Uluslararası konferanslarda davetli konuşmacı"
-    | "Ulusal konferanslarda davetli konuşmacı"
-    | "Uluslararası veya ulusal işbirliğiyle organizasyon gerçekleştirmek"
-    | "Uluslararası veya ulusal işbirliğiyle konuşmacı veya panelist olmak";
-
-interface ToplantiFormData {
-    yazar: string;
-    bildiriAdi: string;
-    konferansAdi: string;
-    yapildigiYer: string;
-    sayfaSayisi: string;
-    tarih: string;
-    kategori: ToplantiKategori;
+interface ToplantiFormProps {
+  onSave: (data: any) => void;
 }
 
-interface Props {
-    onSave: (data: any) => void;
-}
+const toplantiPuanlari: { [key: string]: number } = {
+  "ULUSLARARASI_TAM_METIN_SUNUM": 8,
+  "ULUSLARARASI_OZET_SUNUM": 7,
+  "ULUSLARARASI_POSTER": 6,
+  "ULUSAL_TAM_METIN_SUNUM": 7,
+  "ULUSAL_OZET_SUNUM": 6,
+  "ULUSAL_POSTER": 5,
+  "ULUSLARARASI_KURUL_UYELIGI": 7,
+  "ULUSAL_KURUL_UYELIGI": 5,
+  "ULUSLARARASI_DAVETLI_KONUSMACI": 8,
+  "ULUSAL_DAVETLI_KONUSMACI": 6,
+  "ATOLYE_ORGANIZASYON": 6,
+  "ATOLYE_KONUSMACI": 5,
+};
 
-const kategoriListesi: ToplantiKategori[] = [
-    "Uluslararası bilimsel toplantılarda sözlü olarak sunulan, tam metni yayımlanmış",
-    "Uluslararası bilimsel toplantılarda sözlü olarak sunulan, özet metni yayımlanmış",
-    "Uluslararası bilimsel toplantılarda poster olarak sunulan çalışmalar",
-    "Ulusal bilimsel toplantılarda sözlü, tam metni yayımlanmış",
-    "Ulusal bilimsel toplantılarda sözlü, özet metni yayımlanmış",
-    "Ulusal bilimsel toplantılarda poster olarak sunulan çalışmalar",
-    "Uluslararası organizasyon, yürütme veya bilim kurulu üyeliği",
-    "Ulusal organizasyon, yürütme veya bilim kurulu üyeliği",
-    "Uluslararası konferanslarda davetli konuşmacı",
-    "Ulusal konferanslarda davetli konuşmacı",
-    "Uluslararası veya ulusal işbirliğiyle organizasyon gerçekleştirmek",
-    "Uluslararası veya ulusal işbirliğiyle konuşmacı veya panelist olmak"
+const etkinlikTuruOptions = [
+  { value: "ULUSLARARASI_TAM_METIN_SUNUM", label: "Uluslararası Tam Metin Sunum" },
+  { value: "ULUSLARARASI_OZET_SUNUM", label: "Uluslararası Özet Sunum" },
+  { value: "ULUSLARARASI_POSTER", label: "Uluslararası Poster" },
+  { value: "ULUSAL_TAM_METIN_SUNUM", label: "Ulusal Tam Metin Sunum" },
+  { value: "ULUSAL_OZET_SUNUM", label: "Ulusal Özet Sunum" },
+  { value: "ULUSAL_POSTER", label: "Ulusal Poster" },
+  { value: "ULUSLARARASI_KURUL_UYELIGI", label: "Uluslararası Kurul Üyeliği" },
+  { value: "ULUSAL_KURUL_UYELIGI", label: "Ulusal Kurul Üyeliği" },
+  { value: "ULUSLARARASI_DAVETLI_KONUSMACI", label: "Uluslararası Davetli Konuşmacı" },
+  { value: "ULUSAL_DAVETLI_KONUSMACI", label: "Ulusal Davetli Konuşmacı" },
+  { value: "ATOLYE_ORGANIZASYON", label: "Atölye Organizasyonu" },
+  { value: "ATOLYE_KONUSMACI", label: "Atölye Konuşmacısı" }
 ];
 
-export default function BilimselToplantiForm({ onSave }: Props) {
-    const [form, setForm] = useState<ToplantiFormData>({
-        yazar: "",
-        bildiriAdi: "",
-        konferansAdi: "",
-        yapildigiYer: "",
-        sayfaSayisi: "",
-        tarih: "",
-        kategori: kategoriListesi[0],
-    });
+const ToplantiForm: React.FC<ToplantiFormProps> = ({ onSave }) => {
+  const [form, setForm] = useState({
+    adSoyad: "",
+    konferansAdi: "",
+    tarih: "",
+    yer: "",
+    tur: "",
+    sayfaSayisi: "",
+    puan: 0,  
+  });
 
-    const [kullaniciId, setKullaniciId] = useState<number | null>(null);
+  const [kullaniciId, setKullaniciId] = useState<number | null>(null);
 
-    useEffect(() => {
-        const userId = localStorage.getItem("userId");
-        if (userId) {
-            setKullaniciId(parseInt(userId));
-        }
-    }, []);
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      setKullaniciId(parseInt(userId));
+    }
+  }, []);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setForm(prev => ({ ...prev, [name]: value }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!kullaniciId) {
+      alert("Kullanıcı ID'si bulunamadı.");
+      return;
+    }
+
+    const puan = toplantiPuanlari[form.tur] || 0;
+
+    const payload = {
+      kullaniciId,
+      konferansAdi: form.konferansAdi,
+      bildiriAdi: form.adSoyad,  // bildiriAdi burada kullanılıyor
+      etkinlikTuru: form.tur,  // enum değerinin gönderilmesi
+      sayfaSayisi: form.sayfaSayisi ? parseInt(form.sayfaSayisi) : 0,  // sayfaSayisi varsa int'e çevriliyor
+      tarih: form.tarih,
+      yer: form.yer,
+      puan, // Hesaplanan puan payload'a ekleniyor
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    try {
+      const res = await fetch("http://localhost:3001/api/toplantiEkle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-        if (!kullaniciId) {
-            alert("Kullanıcı ID'si bulunamadı.");
-            return;
-        }
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error("Sunucu Hatası:", errorData);
+        alert(`Kayıt sırasında hata oluştu: ${errorData.message || 'Bilinmeyen hata'}`);
+        return;
+      }
 
-        const payload = {
-            kullaniciId,
-            ...form,
-        };
+      const result = await res.json();
+      onSave(result);
+    } catch (err) {
+      alert("Kayıt sırasında beklenmeyen bir hata oluştu.");
+      console.error("Hata:", err);
+    }
+  };
 
-        try {
-            const response = await fetch("http://localhost:3001/api/toplantiEkle", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            });
+  return (
+    <form onSubmit={handleSubmit} className="p-6 bg-white rounded shadow-md flex flex-col gap-4 w-full">
+      <h2 className="text-xl font-bold text-center">Bilimsel Toplantı Ekle</h2>
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Sunucu hatası oluştu.");
-            }
+      <input
+        name="adSoyad"
+        value={form.adSoyad}
+        onChange={handleChange}
+        placeholder="Ad Soyad"
+        className="border p-2 rounded"
+        required
+      />
+      <input
+        name="konferansAdi"
+        value={form.konferansAdi}
+        onChange={handleChange}
+        placeholder="Konferans Adı"
+        className="border p-2 rounded"
+        required
+      />
+      <input
+        type="date"
+        name="tarih"
+        value={form.tarih}
+        onChange={handleChange}
+        className="border p-2 rounded"
+        required
+      />
+      <input
+        name="yer"
+        value={form.yer}
+        onChange={handleChange}
+        placeholder="Yer"
+        className="border p-2 rounded"
+        required
+      />
+      
+      <label className="font-semibold">Toplantı Türü</label>
+      <select
+        name="tur"
+        value={form.tur}
+        onChange={handleChange}
+        className="border p-2 rounded"
+        required
+      >
+        <option value="">Seçiniz</option>
+        {etkinlikTuruOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
 
-            const result = await response.json();
-            console.log("Toplantı başarıyla eklendi:", result);
-            onSave(result);
-        } catch (error) {
-            console.error("Toplantı ekleme hatası:", error);
-            alert("Toplantı kaydedilemedi. Lütfen tekrar deneyin.");
-        }
-    };
+      {form.tur && (
+        <div className="text-right text-sm text-gray-600">
+          Hesaplanan puan: <strong>{toplantiPuanlari[form.tur]}</strong>
+        </div>
+      )}
 
-    return (
-        <form onSubmit={handleSubmit} className="w-full md:w-3/4 lg:w-2/3 xl:w-full p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="text-xl font-semibold text-center mb-4">Bilimsel Toplantı Faaliyeti</h2>
+      <input
+        type="number"
+        name="sayfaSayisi"
+        value={form.sayfaSayisi}
+        onChange={handleChange}
+        placeholder="Sayfa Sayısı (Opsiyonel)"
+        className="border p-2 rounded"
+      />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input name="yazar" type="text" placeholder="Yazar" onChange={handleChange} value={form.yazar} className="border p-2 rounded " />
-                <input name="bildiriAdi" type="text" placeholder="Bildiri Adı" onChange={handleChange} value={form.bildiriAdi} className="border p-2 rounded" />
-                <input name="konferansAdi" type="text" placeholder="Konferans Adı" onChange={handleChange} value={form.konferansAdi} className="border p-2 rounded" />
-                <input name="yapildigiYer" type="text" placeholder="Yapıldığı Yer" onChange={handleChange} value={form.yapildigiYer} className="border p-2 rounded" />
-                <input name="sayfaSayisi" type="text" placeholder="Sayfa Sayısı" onChange={handleChange} value={form.sayfaSayisi} className="border p-2 rounded" />
-                <input name="tarih" type="date" onChange={handleChange} value={form.tarih} className="border p-2 rounded" />
-            </div>
+      <div className="flex justify-center mt-4">
+        <Button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Kaydet
+        </Button>
+      </div>
+    </form>
+  );
+};
 
-            <h2 className="block font-semibold mt-8">Lütfen Kategori Seçiniz</h2>
-            <select name="kategori" onChange={handleChange} value={form.kategori} className="border p-2 rounded w-full mt-2">
-                {kategoriListesi.map((k, i) => (
-                    <option key={i} value={k}>{k}</option>
-                ))}
-            </select>
-
-            <Button type="submit" className="bg-blue-600 text-white w-full mt-6 py-2 rounded hover:bg-blue-700">
-                Kaydet
-            </Button>
-        </form>
-    );
-}
+export default ToplantiForm;
