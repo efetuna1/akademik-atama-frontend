@@ -71,7 +71,14 @@ const AdminPage = () => {
     };
 
     return (
-        <main className="flex flex-col items-center justify-center min-h-screen bg-gray-200 p-6">
+        <main className="flex flex-col items-center justify-center min-h-screen bg-gray-200 p-6"
+            style={{
+                backgroundImage: "url('/banner2.png')",
+                backgroundSize: "cover", // resmi tam kapla
+                backgroundRepeat: "no-repeat", // tekrar etmesin
+                backgroundPosition: "center", // ortala
+            }}
+        >
             <div className="max-w-4xl bg-white shadow-lg rounded-xl p-8 text-center w-full">
                 <h1 className="text-4xl font-bold text-blue-600 mb-6">Yönetici Sayfası</h1>
 

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/cv/Modal";
@@ -94,9 +93,10 @@ export default function AdayPage() {
 
 
     return (
-        <main className="flex flex-col items-center min-h-screen bg-gray-100 p-6">
+        <main className="flex flex-col items-center min-h-screen bg-gray-400 p-6">
             <div className="max-w-4xl bg-white shadow-lg rounded-2xl p-8 w-full">
                 <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">Aday Özgeçmiş</h1>
+                <h2 className="text-l font-semibold  mb-3">Başvuru yapabilmek için lütfen özgeçmişinizi doldurun.</h2>
 
                 <div className="mb-8">
                     <hr></hr>
