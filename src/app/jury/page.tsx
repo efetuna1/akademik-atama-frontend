@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 type Kullanici = {
   id: number;
@@ -48,34 +49,61 @@ const JuriBasvuruListesi = () => {
     router.push(`/ilandetay`);
   };
 
-  if (loading) return <div>Yükleniyor...</div>;
+  if (loading) return <div className="text-center text-lg mt-10">Yükleniyor...</div>;
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Jüri Başvuru Listesi</h1>
+    <main className="flex flex-col items-center justify-center min-h-screen bg-stone-200 p-6"
+      style={{
+        backgroundImage: "url('/banner2.png')",
+        backgroundSize: "cover", // resmi tam kapla
+        backgroundRepeat: "no-repeat", // tekrar etmesin
+        backgroundPosition: "center", // ortala
+      }}
+    >
+      <div className="max-w-4xl w-full bg-white shadow-lg rounded-2xl p-8">
+        <h1 className="text-3xl font-bold text-blue-600 text-center mb-8">
+          Jüri Başvuru Listesi
+        </h1>
 
-      {basvurular.length === 0 ? (
-        <p>Gösterilecek başvuru yok.</p>
-      ) : (
-        <div className="grid gap-4">
-          {basvurular.map((basvuru) => (
-            <div key={basvuru.id} className="border p-4 rounded-lg shadow-md">
-              <p><strong>Aday:</strong> {basvuru.kullanici.ad} {basvuru.kullanici.soyad}</p>
-              <p><strong>İlan Başlığı:</strong> {basvuru.ilan.baslik}</p>
-              <p><strong>Başvuru Tarihi:</strong> {new Date(basvuru.tarih).toLocaleDateString()}</p>
-              <p><strong>Durum:</strong> {basvuru.durum}</p>
+        {basvurular.length === 0 ? (
+          <p className="text-center text-gray-600">Gösterilecek başvuru yok.</p>
+        ) : (
+          <div className="grid gap-6">
+            {basvurular.map((basvuru) => (
+              <div key={basvuru.id} className="p-6 bg-gray-50 rounded-lg shadow-sm">
+                <p className="text-lg">
+                  <strong>Aday:</strong> {basvuru.kullanici.ad} {basvuru.kullanici.soyad}
+                </p>
+                <p className="text-lg">
+                  <strong>İlan Başlığı:</strong> {basvuru.ilan.baslik}
+                </p>
+                <p className="text-gray-600">
+                  <strong>Başvuru Tarihi:</strong> {new Date(basvuru.tarih).toLocaleDateString()}
+                </p>
+                <p className="text-gray-600">
+                  <strong>Durum:</strong> {basvuru.durum}
+                </p>
 
-              <button
-                onClick={() => handleIncele(basvuru.ilan.id)}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                İncele
-              </button>
-            </div>
-          ))}
+                <div className="flex justify-end mt-4">
+                  <button
+                    onClick={() => handleIncele(basvuru.ilan.id)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all"
+                  >
+                    İncele
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-10 text-center">
+          <Link href="/">
+            <span className="text-blue-500 hover:underline">Ana Sayfaya Dön</span>
+          </Link>
         </div>
-      )}
-    </div>
+      </div>
+    </main>
   );
 };
 

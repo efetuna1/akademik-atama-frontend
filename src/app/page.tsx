@@ -4,7 +4,14 @@ import { Button } from "@/components/ui/button";
 export default function Home() {
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-stone-200 p-6">
+    <main className="flex flex-col items-center justify-center min-h-screen bg-stone-200 p-6"
+      style={{
+        backgroundImage: "url('/banner2.png')",
+        backgroundSize: "cover", // resmi tam kapla
+        backgroundRepeat: "no-repeat", // tekrar etmesin
+        backgroundPosition: "center", // ortala
+      }}
+    >
       <br />
       {/* Ana içerik alanı */}
       <div className="max-w-3xl bg-white shadow-lg rounded-2xl p-8 text-center">
@@ -18,7 +25,7 @@ export default function Home() {
         {/* Giriş butonu */}
         <div className="flex flex-col gap-4 bg-black text-white ">
           <Link href="/login">
-            <Button variant="default" className="w-full">
+            <Button variant="default" className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-700 transition duration-200 cursor-pointer">
               Giriş Yap
             </Button>
           </Link>

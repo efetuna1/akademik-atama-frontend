@@ -32,9 +32,9 @@ export function LoginForm() {
         return;
       }
 
-      localStorage.setItem("token", data.token); 
-      localStorage.setItem("userRole", data.user.role); 
-      localStorage.setItem("userId", data.user.id.toString()); 
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userRole", data.user.role);
+      localStorage.setItem("userId", data.user.id.toString());
 
       const backendRole = data.user.role;
 
@@ -88,7 +88,7 @@ export function LoginForm() {
 
       <Button
         type="submit"
-        className="bg-blue-500 text-white py-2 rounded"
+        className="bg-blue-500 text-white py-2 rounded hover:bg-blue-700 transition duration-200 cursor-pointer"
         disabled={loading}
       >
         {loading ? "Giriş Yapılıyor..." : "Giriş Yap"}
