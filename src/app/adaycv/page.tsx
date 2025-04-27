@@ -96,34 +96,9 @@ export default function AdayPage() {
     return (
         <main className="flex flex-col items-center min-h-screen bg-gray-100 p-6">
             <div className="max-w-4xl bg-white shadow-lg rounded-2xl p-8 w-full">
-                <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">Aday Paneli</h1>
+                <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">Aday Özgeçmiş</h1>
 
-                {/* İlan Listesi */}
                 <div className="mb-8">
-                    <h2 className="text-2xl font-semibold mb-4">Mevcut İlanlar</h2>
-                    <div className="flex flex-col gap-4">
-                        {ilanlar.map((ilan) => (
-                            <div key={ilan.id} className="p-4 bg-gray-50 rounded-lg shadow-sm">
-                                <h3 className="font-semibold text-lg">{ilan.title}</h3>
-                                <p className="text-gray-600">Son başvuru tarihi: {ilan.endDate}</p>
-                                <p className="text-gray-600">Başvuru Kriterleri: {ilan.criteria}</p>
-
-                                <div className="mt-2 flex gap-4">
-                                    <Link href={`/ilan/${ilan.id}`} className="text-blue-500 hover:underline">
-                                        Detayları Gör
-                                    </Link>
-                                    <Link href={`/basvuru/${ilan.id}`} className="text-green-500 hover:underline">
-                                        Başvuru Yap
-                                    </Link>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Özgeçmiş Ekleme Alanı */}
-                <div className="mb-8">
-                    <h1 className="text-2xl text-blue-600 font-bold mb-4">Aday Özgeçmiş</h1>
                     <hr></hr>
                     <hr></hr>
                     <br></br>
@@ -155,7 +130,6 @@ export default function AdayPage() {
 
                     <h2 className="text-xl font-bold mb-3">Kitaplar</h2>
 
-                    {/* Kitap Ekle Butonu */}
                     <div className="flex gap-4 mb-4">
                         <Button
                             onClick={() => setModalType("kitap")}

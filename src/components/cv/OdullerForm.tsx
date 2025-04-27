@@ -1,129 +1,143 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
-interface OdullerFormProps {
-    onSave: (data: any) => void;
+const odulTuruListesi = [
+  { value: "JURILI_ULUSLARARASI", label: "Jürili Uluslararası", puan: 120 },
+  { value: "TUBITAK_BILIM_OZEL_HIZMET", label: "TÜBİTAK Bilim Özel Hizmet", puan: 100 },
+  { value: "TUBA_AKADEMI_ODUL", label: "TÜBA Akademi Ödülü", puan: 80 },
+  { value: "TUBITAK_TESIK", label: "TÜBİTAK Teşvik", puan: 70 },
+  { value: "TUBA_GEBIP_TESEP", label: "TÜBA GEBİP-TESEP", puan: 90 },
+  { value: "JURILI_ULUSAL", label: "Jürili Ulusal", puan: 60 },
+  { value: "JURI_DEGIL", label: "Jüri Değil", puan: 30 },
+  { value: "INTERNATIONAL_YARISMA_BIRINCI", label: "International Yarışma Birinci", puan: 150 },
+  { value: "NATIONAL_YARISMA_BIRINCI", label: "National Yarışma Birinci", puan: 100 },
+  { value: "INTERNATIONAL_SANAT_ODUL", label: "International Sanat Ödülü", puan: 140 },
+  { value: "NATIONAL_SANAT_ODUL", label: "National Sanat Ödülü", puan: 110 },
+];
+
+interface OdulFormProps {
+  onSave: (data: any) => void;
 }
 
-const OdullerForm: React.FC<OdullerFormProps> = ({ onSave }) => {
-    const [form, setForm] = useState({
-        kurumAdi: "",
-        yil: "",
-        secenek: "",
-    });
+const OdulForm: React.FC<OdulFormProps> = ({ onSave }) => {
+  const [odulAdi, setOdulAdi] = useState("");
+  const [odulTuru, setOdulTuru] = useState("JURILI_ULUSLARARASI");
+  const [yil, setYil] = useState("");
+  const [puan, setPuan] = useState(120);
+  const [kullaniciId, setKullaniciId] = useState<number | null>(null);
 
-    const [kullaniciId, setKullaniciId] = useState<number | null>(null);
+  useEffect(() => {
+    const id = localStorage.getItem("userId");
+    if (id) setKullaniciId(parseInt(id));
+  }, []);
 
-    useEffect(() => {
-        const userId = localStorage.getItem("userId");
-        if (userId) {
-            setKullaniciId(parseInt(userId));
-        }
-    }, []);
+  const handleTuruChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selected = e.target.value;
+    setOdulTuru(selected);
+    const kategori = odulTuruListesi.find(p => p.value === selected);
+    setPuan(kategori?.puan || 0);
+  };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setForm((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!kullaniciId) {
+      alert("Kullanıcı ID bulunamadı.");
+      return;
+    }
+
+    const data = {
+      kullaniciId,
+      odulAdi,
+      odulTuru,
+      yil: parseInt(yil),
+      puan,
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:3001/api/odulEkle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-        if (!kullaniciId) {
-            alert("Kullanıcı ID'si bulunamadı.");
-            return;
-        }
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Sunucu hatası.");
+      }
 
-        const payload = {
-            ...form,
-            kullaniciId,
-        };
+      const result = await response.json();
+      console.log("Ödül faaliyeti kaydedildi:", result);
+      onSave(result);
+    } catch (err) {
+      console.error("Ödül faaliyeti hatası:", err);
+      alert("Ödül faaliyeti kaydedilemedi.");
+    }
+  };
 
-        try {
-            const response = await fetch("http://localhost:3001/api/odulEkle", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            });
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-xl">
+      <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Ödül Faaliyeti</h2>
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.message || "Sunucu hatası oluştu.");
-            }
+      {/* Ödül Adı */}
+      <div className="flex flex-col gap-2">
+        <label htmlFor="odulAdi" className="font-medium text-gray-700">Ödül Adı</label>
+        <input
+          id="odulAdi"
+          type="text"
+          placeholder="Ödül Adı"
+          value={odulAdi}
+          onChange={(e) => setOdulAdi(e.target.value)}
+          className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+          required
+        />
+      </div>
 
-            const result = await response.json();
-            console.log("Ödül başarıyla kaydedildi:", result);
-            onSave(result);
-        } catch (error) {
-            console.error("Ödül kaydı sırasında hata oluştu:", error);
-            alert("Ödül kaydedilemedi. Lütfen tekrar deneyin.");
-        }
-    };
+      {/* Yıl */}
+      <div className="flex flex-col gap-2">
+        <label htmlFor="yil" className="font-medium text-gray-700">Yıl</label>
+        <input
+          id="yil"
+          type="number"
+          placeholder="Yıl"
+          value={yil}
+          onChange={(e) => setYil(e.target.value)}
+          className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+          required
+        />
+      </div>
 
-    return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold text-center">Ödüller</h2>
+      {/* Ödül Türü */}
+      <div className="flex flex-col gap-2">
+        <label htmlFor="odulTuru" className="font-medium text-gray-700">Ödül Türü</label>
+        <select
+          id="odulTuru"
+          value={odulTuru}
+          onChange={handleTuruChange}
+          className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+          required
+        >
+          {odulTuruListesi.map((t) => (
+            <option key={t.value} value={t.value}>
+              {t.label}
+            </option>
+          ))}
+        </select>
+      </div>
 
-            <input
-                type="text"
-                name="kurumAdi"
-                placeholder="Ödülün Veren Kurul/Kurumun Adı"
-                value={form.kurumAdi}
-                onChange={handleChange}
-                className="border p-2 rounded"
-            />
-            <input
-                type="text"
-                name="yil"
-                placeholder="Yılı"
-                value={form.yil}
-                onChange={handleChange}
-                className="border p-2 rounded"
-            />
+      {/* Puan Gösterimi */}
+      <div className="text-right text-sm text-gray-600 mt-2">
+        <strong>Hesaplanan Puan: {puan}</strong>
+      </div>
 
-            <div>
-                <label htmlFor="secenek" className="block font-semibold mt-4">Kategori Seçiniz</label>
-                <select
-                    name="secenek"
-                    value={form.secenek}
-                    onChange={handleChange}
-                    className="border p-2 rounded w-full mt-2"
-                >
-                    <option value="">Seçiniz</option>
-                    <option value="1">Sürekli ve Periyodik olarak Jürili Uluslararası Bilim ve Sanat Ödülleri</option>
-                    <option value="2">TÜBİTAK Tarafından Verilen Bilim, Özel ve Hizmet Ödülleri</option>
-                    <option value="3">TÜBA Tarafından Verilen Akademi Ödülleri</option>
-                    <option value="4">TÜBİTAK Tarafından Verilen Teşvik Ödülü (Yayın Teşvik Ödülü Hariç)</option>
-                    <option value="5">TÜBA Tarafından Verilen GEBİP ve TESEP Ödülleri</option>
-                    <option value="6">Sürekli ve Periyodik Olarak Jürili Ulusal Bilim ve Sanat Ödülleri</option>
-                    <option value="7">Jürili Olmayan Uluslararası/Ulusal Ödüller</option>
-                    <option value="8">Uluslararası Hakemli Yarışmalarda Birincilik Derecesi</option>
-                    <option value="9">Uluslararası Hakemli Yarışmalarda İkincilik Derecesi</option>
-                    <option value="10">Uluslararası Hakemli Yarışmalarda Üçüncülük Derecesi</option>
-                    <option value="11">Ulusal Hakemli Yarışmalarda Birincilik Derecesi</option>
-                    <option value="12">Ulusal Hakemli Yarışmalarda İkincilik Derecesi</option>
-                    <option value="13">Ulusal Hakemli Yarışmalarda Üçüncülük Derecesi</option>
-                    <option value="14">Uluslararası Bilimsel Toplantılarda Alınan Ödüller</option>
-                    <option value="15">Ulusal Bilimsel Toplantılarda Alınan Ödüller</option>
-                    <option value="16">Sanat, Tasarım ve Mimarlık - Uluslararası Yarışmalar</option>
-                    <option value="17">Sanat, Tasarım ve Mimarlık - Ulusal Yarışmalar</option>
-                    <option value="18">KOU Kurumsal Ödülleri</option>
-                    <option value="19">Bilimsel Eserlere Atfedilen Ödüller</option>
-                </select>
-            </div>
-
-            <div className="mt-4 flex justify-center">
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
-                    Kaydet
-                </Button>
-            </div>
-        </form>
-    );
+      {/* Kaydet Butonu */}
+      <div className="mt-6 flex justify-center">
+        <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg text-lg shadow-md transition-all duration-300">
+          Kaydet
+        </Button>
+      </div>
+    </form>
+  );
 };
 
-export default OdullerForm;
+export default OdulForm;
