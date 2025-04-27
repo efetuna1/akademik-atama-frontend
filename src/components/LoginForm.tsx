@@ -32,12 +32,10 @@ export function LoginForm() {
         return;
       }
 
-      // Kullanıcı ID'sini ve diğer verileri localStorage'a kaydet
-      localStorage.setItem("token", data.token); // JWT token
-      localStorage.setItem("userRole", data.user.role); // Kullanıcı rolü
-      localStorage.setItem("userId", data.user.id.toString()); // Kullanıcı ID'si
+      localStorage.setItem("token", data.token); 
+      localStorage.setItem("userRole", data.user.role); 
+      localStorage.setItem("userId", data.user.id.toString()); 
 
-      // Gelen role backend'den alınır, frontend'de setRole kullanılmaz!
       const backendRole = data.user.role;
 
       switch (backendRole) {
@@ -52,7 +50,7 @@ export function LoginForm() {
           break;
         case "ADAY":
         default:
-          router.push("/aday");
+          router.push("/IlanlarPage");
           break;
       }
     } catch (err) {
@@ -70,7 +68,6 @@ export function LoginForm() {
     >
       <h2 className="text-center text-2xl font-semibold mb-4">Akademik Başvuru Giriş</h2>
 
-      {/* TC Kimlik No input */}
       <input
         type="text"
         placeholder="TC Kimlik No"
@@ -80,7 +77,6 @@ export function LoginForm() {
         required
       />
 
-      {/* Password Input */}
       <input
         type="password"
         placeholder="Şifre"
@@ -90,7 +86,6 @@ export function LoginForm() {
         required
       />
 
-      {/* Submit Button */}
       <Button
         type="submit"
         className="bg-blue-500 text-white py-2 rounded"
@@ -99,7 +94,6 @@ export function LoginForm() {
         {loading ? "Giriş Yapılıyor..." : "Giriş Yap"}
       </Button>
 
-      {/* Not: Rol seçimi artık sadece görsel bilgi amaçlı */}
       <div className="text-center text-sm text-gray-600 mt-4">
         {role === "candidate" && <p>Başvuru oluşturabilir ve takip edebilirsiniz.</p>}
         {role === "jury" && <p>Başvuruları değerlendirebilir ve puanlayabilirsiniz.</p>}
