@@ -10,48 +10,86 @@ export default function Navbar() {
     const router = useRouter();
 
     useEffect(() => {
-        const storedRole = localStorage.getItem("Role");
+        const storedRole = localStorage.getItem("userRole"); // Burada "userRole" doğru
         setRole(storedRole);
     }, []);
 
     const handleLogout = () => {
-        // Çıkış işlemi
-        localStorage.removeItem("Role");
-        router.push("/login");  // Çıkış yaptıktan sonra login sayfasına yönlendir
+        alert("Çıkış yapıldı.");
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("token");
+        router.push("/login");
     };
 
-    if (pathname !== "/" && pathname !== "/IlanlarPage") {
-        return null;
-    }
 
     type LinkItem = {
         href: string;
         label: string;
-        onClick?: () => void; // Optional onClick property
+        onClick?: () => void;
     };
 
-    const commonLinks: LinkItem[] = [
+    let links: LinkItem[] = [
         { href: "/", label: "Ana Sayfa" },
         { href: "/IlanlarPage", label: "İlanlar" },
     ];
 
-    if (!role) {
-        commonLinks.push({ href: "/login", label: "Giriş Yap" });
+    if (role) {
+        switch (role) {
+            case "ADAY":
+                links = [
+                    { href: "/AdayPage", label: "Aday Sayfası" },
+                    { href: "/IlanlarPage", label: "İlanlar" },
+                    { href: "#", label: "Çıkış Yap", onClick: handleLogout },
+                ];
+                break;
+            case "JURI":
+                links = [
+                    { href: "/jury", label: "Jüri Sayfası" },
+                    { href: "/IlanlarPage", label: "İlanlar" },
+                    { href: "#", label: "Çıkış Yap", onClick: handleLogout },
+                ];
+                break;
+            case "ADMIN":
+                links = [
+                    { href: "/admin", label: "Admin Paneli" },
+                    { href: "/IlanlarPage", label: "İlanlar" },
+                    { href: "#", label: "Çıkış Yap", onClick: handleLogout },
+                ];
+                break;
+            case "ILANYONETICI":
+                links = [
+                    { href: "/IlanYonetimi", label: "İlan Yönetim Sayfası" },
+                    { href: "/IlanlarPage", label: "İlanlar" },
+                    { href: "#", label: "Çıkış Yap", onClick: handleLogout },
+                ];
+                break;
+            default:
+                links = [
+                    { href: "/", label: "Ana Sayfa" },
+                    { href: "/IlanlarPage", label: "İlanlar" },
+                    { href: "/login", label: "Giriş Yap" },
+                ];
+        }
     } else {
-        // Eğer kullanıcı giriş yaptıysa, çıkış yap butonunu ekle
-        commonLinks.push({ href: "#", label: "Çıkış Yap", onClick: handleLogout });
+        // Giriş yapmamış kullanıcı
+        links.push({ href: "/login", label: "Giriş Yap" });
     }
 
     return (
         <nav className="bg-black p-4 text-white shadow-md">
-            <div className="container mx-auto flex justify-between items-center">
-                <div className="font-bold text-2xl">Akademik Başvuru Sistemi</div>
+            <div className="container mx-auto flex justify-between items-center ">
+                <div className="font-bold text-2xl hover:bg-gray-800 " onClick={() => router.push("/")}>Akademik Başvuru Sistemi</div>
                 <div className="flex space-x-7">
-                    {commonLinks.map((link) => (
+                    {links.map((link) => (
                         <Link
-                            key={link.href}
+                            key={link.label}
                             href={link.href}
-                            onClick={link.onClick} // Çıkış yap butonunun çalışmasını sağlar
+                            onClick={(e) => {
+                                if (link.onClick) {
+                                    e.preventDefault();
+                                    link.onClick();
+                                }
+                            }}
                             className="hover:underline cursor-pointer"
                         >
                             {link.label}

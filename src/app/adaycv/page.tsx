@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import Modal from "@/components/cv/Modal";
 import MakaleForm from "@/components/cv/MakaleForm";
 import BilimselToplantiForm from "@/components/cv/BilimselToplantiForm";
@@ -18,6 +19,11 @@ import GuzelSanatlarForm from "@/components/cv/GuzelSanatlarForm";
 
 
 export default function AdayPage() {
+    const router = useRouter();
+    const handleGoBack = () => {
+        router.push("/AdayPage");
+    };
+
     const [modalType, setModalType] = useState<"makale" | "toplanti" | "kitap" | "atif" | "egitim" | "tez" | "patent" | "proje" | "editorluk" | "oduller" | "idarigorev" | "guzelsanatlar" | null>(null);
 
     const handleMakaleSave = (data: any) => {
@@ -72,7 +78,14 @@ export default function AdayPage() {
 
     return (
         <main className="flex flex-col items-center min-h-screen bg-gray-400 p-6">
+
             <div className="max-w-4xl bg-white shadow-lg rounded-2xl p-8 w-full">
+                <Button
+                    onClick={handleGoBack}
+                    className="text-blue-600 hover:bg-blue-200 rounded "
+                >
+                    Aday Sayfasına Geri Dön
+                </Button>
                 <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">Aday Özgeçmiş</h1>
                 <h2 className="text-l font-semibold  mb-3">Başvuru yapabilmek için lütfen özgeçmişinizi doldurun.</h2>
 
