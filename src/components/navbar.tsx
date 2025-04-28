@@ -42,7 +42,7 @@ export default function Navbar() {
                     { href: "#", label: "Çıkış Yap", onClick: handleLogout },
                 ];
                 break;
-            case "JURI":
+            case "JURI_UYESI":
                 links = [
                     { href: "/jury", label: "Jüri Sayfası" },
                     { href: "/IlanlarPage", label: "İlanlar" },
@@ -56,7 +56,7 @@ export default function Navbar() {
                     { href: "#", label: "Çıkış Yap", onClick: handleLogout },
                 ];
                 break;
-            case "ILANYONETICI":
+            case "YONETICI":
                 links = [
                     { href: "/IlanYonetimi", label: "İlan Yönetim Sayfası" },
                     { href: "/IlanlarPage", label: "İlanlar" },
