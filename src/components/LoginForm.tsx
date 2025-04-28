@@ -71,7 +71,7 @@ export function LoginForm() {
           router.push("/admin");
           break;
         case "ILANYONETICI":
-          router.push("/ilanYonetimi");
+          router.push("/IlanYonetimi");
           break;
         case "JURI":
           router.push("/jury/dashboard");

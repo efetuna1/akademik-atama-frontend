@@ -55,7 +55,7 @@ const IlanlarPage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3001/api/basvuruYap", {
+      const response = await fetch("http://localhost:3001/api/ilanGetir", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +84,7 @@ const IlanlarPage = () => {
   };
 
   const handleProfilimClick = () => {
-    router.push("/adaycv");
+    router.push("/AdayPage");
   };
 
   if (loading) {

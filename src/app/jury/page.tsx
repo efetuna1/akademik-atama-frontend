@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/navbar";
+import { Button } from "@/components/ui/button";
 
 type Kullanici = {
   id: number;
@@ -29,6 +30,11 @@ const JuriBasvuruListesi = () => {
   const [basvurular, setBasvurular] = useState<Basvuru[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  const handleGoHome = () => {
+    router.push("/"); // Ana sayfaya yönlendirme
+  };
+
 
   useEffect(() => {
     const fetchBasvurular = async () => {
@@ -63,6 +69,12 @@ const JuriBasvuruListesi = () => {
       }}
     >
       <div className="max-w-4xl w-full bg-white shadow-lg rounded-2xl p-8">
+        <Button
+          onClick={handleGoHome}
+          className="text-blue-600 hover:bg-blue-200 rounded "
+        >
+          Ana Sayfaya Geri Dön
+        </Button>
         <h1 className="text-3xl font-bold text-blue-600 text-center mb-8">
           Jüri Başvuru Listesi
         </h1>
