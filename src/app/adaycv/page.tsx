@@ -15,7 +15,6 @@ import EditorlukForm from "@/components/cv/EditorlukForm";
 import OdullerForm from "@/components/cv/OdullerForm";
 import IdariGorevlerForm from "@/components/cv/IdariGorevlerForm";
 import GuzelSanatlarForm from "@/components/cv/GuzelSanatlarForm";
-import { LogoutButton } from "@/components/ui/logoutButton";
 
 
 export default function AdayPage() {
@@ -71,14 +70,8 @@ export default function AdayPage() {
     };
 
 
-
-
-
     return (
         <main className="flex flex-col items-center min-h-screen bg-gray-400 p-6">
-            <div className="flex justify-end w-full mb-4">
-                <LogoutButton />
-            </div>
             <div className="max-w-4xl bg-white shadow-lg rounded-2xl p-8 w-full">
                 <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">Aday Özgeçmiş</h1>
                 <h2 className="text-l font-semibold  mb-3">Başvuru yapabilmek için lütfen özgeçmişinizi doldurun.</h2>
