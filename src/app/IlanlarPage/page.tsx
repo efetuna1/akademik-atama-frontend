@@ -24,6 +24,8 @@ const IlanlarPage = () => {
   const router = useRouter();
 
   useEffect(() => {
+
+
     const fetchIlanlar = async () => {
       try {
         const response = await fetch("http://localhost:3001/api/ilanGetir");
