@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/navbar";
 import Link from "next/link";
 import React from "react";
+import { LogoutButton } from "@/components/ui/logoutButton";
 
 export default function Home() {
+
   const router = useRouter();
 
   const handleDevamEt = () => {
@@ -37,7 +39,7 @@ export default function Home() {
   return (
     <div>
       <Navbar />
-
+      <LogoutButton />
 
       <main
         className="flex flex-col items-center justify-center min-h-screen bg-stone-200 p-6"
