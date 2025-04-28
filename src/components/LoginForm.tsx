@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
@@ -9,7 +9,35 @@ export function LoginForm() {
   const [role, setRole] = useState<"candidate" | "jury" | "admin" | "ilanYonetici">("candidate");
   const [tcKimlikNo, setTcKimlikNo] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checkingToken, setCheckingToken] = useState(true); // token kontrol loading
+
   const router = useRouter();
+
+  // Token kontrolü: Eğer token varsa, login sayfasını atla
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("userRole");
+
+    if (token && userRole) {
+      switch (userRole) {
+        case "ADMIN":
+          router.push("/admin");
+          break;
+        case "ILANYONETICI":
+          router.push("/ilanYonetimi");
+          break;
+        case "JURI":
+          router.push("/jury/dashboard");
+          break;
+        case "ADAY":
+        default:
+          router.push("/IlanlarPage");
+          break;
+      }
+    } else {
+      setCheckingToken(false); // Token yoksa formu göster
+    }
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,6 +89,16 @@ export function LoginForm() {
     }
   };
 
+  // Eğer token kontrol ediliyorsa, ekranda sadece "Yükleniyor..." yaz
+  if (checkingToken) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-gray-600 text-lg">Yükleniyor...</p>
+      </div>
+    );
+  }
+
+  // Eğer token yoksa, login formu göster
   return (
     <form
       onSubmit={handleSubmit}
@@ -99,6 +137,16 @@ export function LoginForm() {
         {role === "jury" && <p>Başvuruları değerlendirebilir ve puanlayabilirsiniz.</p>}
         {role === "admin" && <p>Yönetici paneline erişebilirsiniz.</p>}
         {role === "ilanYonetici" && <p>İlanları yönetebilirsiniz.</p>}
+      </div>
+
+      {/* Üye Ol Butonu */}
+      <div className="mt-6 text-center">
+        <Button
+          onClick={() => router.push("/register")}
+          className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700 transition duration-200 cursor-pointer"
+        >
+          Üye Ol
+        </Button>
       </div>
     </form>
   );

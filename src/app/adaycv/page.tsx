@@ -15,26 +15,8 @@ import EditorlukForm from "@/components/cv/EditorlukForm";
 import OdullerForm from "@/components/cv/OdullerForm";
 import IdariGorevlerForm from "@/components/cv/IdariGorevlerForm";
 import GuzelSanatlarForm from "@/components/cv/GuzelSanatlarForm";
+import { LogoutButton } from "@/components/ui/logoutButton";
 
-
-const ilanlar = [
-    {
-        id: 1,
-        title: "Bilimsel Araştırma Bursu",
-        description: "Bu burs, bilimsel araştırma projelerine destek sağlamaktadır.",
-        endDate: "2025-05-01",
-        criteria: "Lisans mezunu, araştırma tecrübesi",
-        status: "open",
-    },
-    {
-        id: 2,
-        title: "Öğretim Üyesi Aranıyor",
-        description: "Yeni bir öğretim üyesi alınacaktır.",
-        endDate: "2025-06-01",
-        criteria: "Doktora mezunu, öğretim deneyimi",
-        status: "open",
-    },
-];
 
 export default function AdayPage() {
     const [modalType, setModalType] = useState<"makale" | "toplanti" | "kitap" | "atif" | "egitim" | "tez" | "patent" | "proje" | "editorluk" | "oduller" | "idarigorev" | "guzelsanatlar" | null>(null);
@@ -94,6 +76,9 @@ export default function AdayPage() {
 
     return (
         <main className="flex flex-col items-center min-h-screen bg-gray-400 p-6">
+            <div className="flex justify-end w-full mb-4">
+                <LogoutButton />
+            </div>
             <div className="max-w-4xl bg-white shadow-lg rounded-2xl p-8 w-full">
                 <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">Aday Özgeçmiş</h1>
                 <h2 className="text-l font-semibold  mb-3">Başvuru yapabilmek için lütfen özgeçmişinizi doldurun.</h2>
