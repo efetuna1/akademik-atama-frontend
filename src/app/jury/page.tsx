@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Navbar from "@/components/navbar";
 
 type Kullanici = {
   id: number;
@@ -50,8 +51,9 @@ const JuriBasvuruListesi = () => {
   };
 
   if (loading) return <div className="text-center text-lg mt-10">Yükleniyor...</div>;
-
+  <Navbar />
   return (
+
     <main className="flex flex-col items-center justify-center min-h-screen bg-stone-200 p-6"
       style={{
         backgroundImage: "url('/banner2.png')",

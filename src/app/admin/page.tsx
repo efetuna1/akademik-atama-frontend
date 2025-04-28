@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import Navbar from '@/components/navbar';
 
 interface JuryMember {
     id: string;
@@ -69,7 +70,7 @@ const AdminPage = () => {
             alert('Lütfen bir kategori seçin');
         }
     };
-
+    <Navbar />
     return (
         <main className="flex flex-col items-center justify-center min-h-screen bg-gray-200 p-6"
             style={{

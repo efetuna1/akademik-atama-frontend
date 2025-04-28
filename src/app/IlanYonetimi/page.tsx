@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import Navbar from "@/components/navbar";
 
 const kadroTurleri = [
     { value: "DR_OGR_UYESI", label: "Dr. Öğr. Üyesi" },
@@ -71,7 +72,7 @@ const IlanYonetimi = () => {
             setLoading(false);
         }
     };
-
+    <Navbar />
     return (
         <main className="flex flex-col items-center justify-center min-h-screen bg-gray-400 p-6"
             style={{
