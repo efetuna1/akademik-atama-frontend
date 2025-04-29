@@ -9,11 +9,10 @@ export function LoginForm() {
   const [role, setRole] = useState<"candidate" | "jury" | "admin" | "ilanYonetici">("candidate");
   const [tcKimlikNo, setTcKimlikNo] = useState("");
   const [loading, setLoading] = useState(false);
-  const [checkingToken, setCheckingToken] = useState(true); // token kontrol loading
+  const [checkingToken, setCheckingToken] = useState(true); 
 
   const router = useRouter();
 
-  // Token kontrolü: Eğer token varsa, login sayfasını atla
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userRole = localStorage.getItem("userRole");
@@ -27,7 +26,7 @@ export function LoginForm() {
           router.push("/ilanYonetimi");
           break;
         case "JURI":
-          router.push("/jury/dashboard");
+          router.push("/jury");
           break;
         case "ADAY":
         default:
@@ -35,7 +34,7 @@ export function LoginForm() {
           break;
       }
     } else {
-      setCheckingToken(false); // Token yoksa formu göster
+      setCheckingToken(false); 
     }
   }, [router]);
 
@@ -89,7 +88,6 @@ export function LoginForm() {
     }
   };
 
-  // Eğer token kontrol ediliyorsa, ekranda sadece "Yükleniyor..." yaz
   if (checkingToken) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -98,7 +96,6 @@ export function LoginForm() {
     );
   }
 
-  // Eğer token yoksa, login formu göster
   return (
     <form
       onSubmit={handleSubmit}
@@ -139,7 +136,6 @@ export function LoginForm() {
         {role === "ilanYonetici" && <p>İlanları yönetebilirsiniz.</p>}
       </div>
 
-      {/* Üye Ol Butonu */}
       <div className="mt-6 text-center">
         <Button
           onClick={() => router.push("/register")}

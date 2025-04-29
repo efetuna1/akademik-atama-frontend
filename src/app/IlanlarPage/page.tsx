@@ -24,8 +24,6 @@ const IlanlarPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-
-
     const fetchIlanlar = async () => {
       try {
         const response = await fetch("http://localhost:3001/api/ilanGetir");
@@ -33,17 +31,31 @@ const IlanlarPage = () => {
         setIlanlar(data);
       } catch (error) {
         console.error("İlanlar çekilemedi:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
-    const storedBasvurular = localStorage.getItem("basvurulanIlanlar");
-    if (storedBasvurular) {
-      setBasvurulanIlanlar(JSON.parse(storedBasvurular));
-    }
+    const fetchBasvurularim = async () => {
+      const kullaniciId = localStorage.getItem("userId");
+      if (!kullaniciId) return;
 
-    fetchIlanlar();
+      try {
+        const response = await fetch(`http://localhost:3001/api/adayBasvuru?kullaniciId=${kullaniciId}`);
+        const data = await response.json();
+        
+        const ilanIdListesi = data.map((item: { ilanId: number }) => item.ilanId);
+        setBasvurulanIlanlar(ilanIdListesi);
+      } catch (error) {
+        console.error("Başvurular çekilemedi:", error);
+      }
+    };
+
+    const fetchData = async () => {
+      await fetchIlanlar();
+      await fetchBasvurularim();
+      setLoading(false);
+    };
+
+    fetchData();
   }, []);
 
   const handleBasvuruYap = async (ilanId: number) => {
@@ -55,7 +67,7 @@ const IlanlarPage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3001/api/ilanGetir", {
+      const response = await fetch("http://localhost:3001/api/basvuruYap", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,13 +82,14 @@ const IlanlarPage = () => {
         return;
       }
 
-      setBasvurulanIlanlar((prev) => {
-        const updatedBasvurular = [...prev, ilanId];
-        localStorage.setItem("basvurulanIlanlar", JSON.stringify(updatedBasvurular));
-        return updatedBasvurular;
-      });
-
       alert("Başvuru başarıyla yapıldı!");
+
+      // Başvuru yapınca başvurular güncellensin
+      const updatedBasvurular = await fetch(`http://localhost:3001/api/adayBasvuru?kullaniciId=${kullaniciId}`);
+      const updatedData = await updatedBasvurular.json();
+      const updatedIlanIdListesi = updatedData.map((item: { ilanId: number }) => item.ilanId);
+      setBasvurulanIlanlar(updatedIlanIdListesi);
+
     } catch (error) {
       console.error("Başvuru hatası:", error);
       alert("Başvuru sırasında bir hata oluştu.");
@@ -96,17 +109,16 @@ const IlanlarPage = () => {
   }
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-stone-200 p-6"
+    <main
+      className="flex flex-col items-center justify-center min-h-screen bg-stone-200 p-6"
       style={{
         backgroundImage: "url('/banner2.png')",
-        backgroundSize: "cover", // resmi tam kapla
-        backgroundRepeat: "no-repeat", // tekrar etmesin
-        backgroundPosition: "center", // ortala
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
       }}
     >
-
       <div className="max-w-5xl w-full bg-white shadow-lg rounded-2xl p-8 relative">
-
         <button
           onClick={handleProfilimClick}
           className="absolute top-6 right-8 text-blue-500 hover:underline font-semibold hover:cursor-pointer"
