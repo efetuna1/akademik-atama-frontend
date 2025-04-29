@@ -1,126 +1,94 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import Navbar from "@/components/navbar";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
-type Kullanici = {
-  id: number;
-  ad: string;
-  soyad: string;
-  email: string;
-};
-
-type Ilan = {
-  id: number;
-  baslik: string;
-};
-
-type Basvuru = {
-  id: number;
-  durum: string;
-  tarih: string;
-  kullanici: Kullanici;
-  ilan: Ilan;
-};
-
-const JuriBasvuruListesi = () => {
-  const [basvurular, setBasvurular] = useState<Basvuru[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function JuriBasvurular() {
+  const [juriData, setJuriData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
   const router = useRouter();
 
-  const handleGoHome = () => {
-    router.push("/"); // Ana sayfaya yönlendirme
-  };
-
-
   useEffect(() => {
-    const fetchBasvurular = async () => {
+    const userId = localStorage.getItem('userId'); // UserId'yi localStorage'dan alıyoruz
+
+    if (!userId) {
+      setError('Kullanıcı ID bulunamadı');
+      setLoading(false);
+      return;
+    }
+
+    const fetchJuriData = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/juriBasvuru");
+        const response = await fetch(`http://localhost:3001/api/juriBasvuru?userId=${userId}`);
+        
+        if (!response.ok) {
+          throw new Error('Başvurular alınırken bir hata oluştu');
+        }
+
         const data = await response.json();
-        setBasvurular(data);
-      } catch (error) {
-        console.error("Başvurular çekilemedi:", error);
+        setJuriData(data.ilanlar); // Backend'den gelen ilan verisini alıyoruz
+      } catch (err:any) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBasvurular();
-  }, []);
+    fetchJuriData();
+  }, [router]);
 
-  const handleIncele = (ilanId: number) => {
-    router.push(`/ilandetay`);
-  };
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-gray-600 text-lg">Yükleniyor...</p>
+      </div>
+    );
+  }
 
-  if (loading) return <div className="text-center text-lg mt-10">Yükleniyor...</div>;
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-red-500 text-lg">{error}</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
-      <Navbar />
-      <main className="flex flex-col items-center justify-center min-h-screen bg-stone-200 p-6"
-        style={{
-          backgroundImage: "url('/banner2.png')",
-          backgroundSize: "cover", // resmi tam kapla
-          backgroundRepeat: "no-repeat", // tekrar etmesin
-          backgroundPosition: "center", // ortala
-        }}
-      >
-        <div className="max-w-4xl w-full bg-white shadow-lg rounded-2xl p-8">
-          <Button
-            onClick={handleGoHome}
-            className="text-blue-600 hover:bg-blue-200 rounded "
-          >
-            Ana Sayfaya Geri Dön
-          </Button>
-          <h1 className="text-3xl font-bold text-blue-600 text-center mb-8">
-            Jüri Başvuru Listesi
-          </h1>
-
-          {basvurular.length === 0 ? (
-            <p className="text-center text-gray-600">Gösterilecek başvuru yok.</p>
-          ) : (
-            <div className="grid gap-6">
-              {basvurular.map((basvuru) => (
-                <div key={basvuru.id} className="p-6 bg-gray-50 rounded-lg shadow-sm">
-                  <p className="text-lg">
-                    <strong>Aday:</strong> {basvuru.kullanici.ad} {basvuru.kullanici.soyad}
-                  </p>
-                  <p className="text-lg">
-                    <strong>İlan Başlığı:</strong> {basvuru.ilan.baslik}
-                  </p>
-                  <p className="text-gray-600">
-                    <strong>Başvuru Tarihi:</strong> {new Date(basvuru.tarih).toLocaleDateString()}
-                  </p>
-                  <p className="text-gray-600">
-                    <strong>Durum:</strong> {basvuru.durum}
-                  </p>
-
-                  <div className="flex justify-end mt-4">
-                    <button
-                      onClick={() => handleIncele(basvuru.ilan.id)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all"
-                    >
-                      İncele
-                    </button>
-                  </div>
-                </div>
-              ))}
+    <div className="max-w-6xl mx-auto p-6">
+      <h2 className="text-2xl font-semibold text-center mb-6">Jüri Başvuruları</h2>
+      {juriData?.length === 0 ? (
+        <p className="text-center text-gray-600">Başvuru bulunmamaktadır.</p>
+      ) : (
+        <div className="space-y-6">
+          {juriData?.map((ilan: any) => (
+            <div key={ilan.id} className="border p-4 rounded shadow-md">
+              <h3 className="text-xl font-semibold mb-2">{ilan.baslik}</h3>
+              <p className="text-gray-700">{ilan.aciklama}</p>
+              <div className="mt-4">
+                <h4 className="font-medium">Başvurular:</h4>
+                <ul className="list-disc ml-5">
+                  {ilan.basvurular.map((basvuru: any) => (
+                    <li key={basvuru.id} className="text-gray-600">
+                      <p><strong>{basvuru.kullanici.ad} {basvuru.kullanici.soyad}</strong></p>
+                      <p>TC Kimlik No: {basvuru.kullanici.tcKimlikNo}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-          )}
-
-          <div className="mt-10 text-center">
-            <Link href="/">
-              <span className="text-blue-500 hover:underline">Ana Sayfaya Dön</span>
-            </Link>
-          </div>
+          ))}
         </div>
-      </main>
+      )}
+      <div className="mt-6 text-center">
+        <Button
+          onClick={() => router.push('/dashboard')}
+          className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700 transition duration-200 cursor-pointer"
+        >
+          Geri Dön
+        </Button>
+      </div>
     </div>
   );
-};
-
-export default JuriBasvuruListesi;
+}
