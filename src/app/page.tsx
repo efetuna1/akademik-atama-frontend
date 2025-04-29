@@ -75,7 +75,7 @@ export default function Home() {
         <div className="mt-12 w-full max-w-4xl bg-white shadow-lg rounded-2xl p-6">
           <h2 className="text-2xl font-semibold text-blue-600 mb-4">Güncel İlanlar</h2>
           <Link href="/login" className="text-red-500 hover:underline mt-2 block">
-            Başvuru yapmak için buraya tıklayarak giriş yapabilirsiniz.
+            İlanları görüntülemek ve başvuru yapmbak için buraya tıklayabilirsiniz.
           </Link>
           <div className="flex flex-col gap-4">
             <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
@@ -90,9 +90,6 @@ export default function Home() {
               <h3 className="font-semibold text-lg">Yeni Başvuru İlanı: Akademik Kongre Katılım Desteği</h3>
               <p className="text-gray-600">Son başvuru tarihi: 5 Haziran 2025</p>
             </div>
-            <Link href="/IlanlarPage" className="text-blue-500 hover:underline mt-2 block">
-              Daha fazlasını gör
-            </Link>
           </div>
         </div>
 
@@ -105,16 +102,10 @@ export default function Home() {
             <div className="flex-1 p-4 bg-gray-50 rounded-lg shadow-sm">
               <h3 className="font-semibold text-lg">Akademik Yazılım Çözümleri</h3>
               <p className="text-gray-600">Araştırmalarınızı hızlandırmak için en iyi yazılım araçları. Şimdi keşfedin.</p>
-              <Link href="/login" className="text-blue-500 hover:underline mt-2 block">
-                Giriş Yap
-              </Link>
             </div>
             <div className="flex-1 p-4 bg-gray-50 rounded-lg shadow-sm">
               <h3 className="font-semibold text-lg">Uluslararası Akademik Burslar</h3>
               <p className="text-gray-600">Uluslararası burslar ve destekler hakkında bilgi alabilirsiniz.</p>
-              <Link href="/login" className="text-blue-500 hover:underline mt-2 block">
-                Giriş Yap
-              </Link>
             </div>
           </div>
         </div>

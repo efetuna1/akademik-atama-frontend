@@ -30,7 +30,6 @@ export default function Navbar() {
 
     let links: LinkItem[] = [
         { href: "/", label: "Ana Sayfa" },
-        { href: "/IlanlarPage", label: "İlanlar" },
     ];
 
     if (role) {
@@ -45,28 +44,24 @@ export default function Navbar() {
             case "JURI_UYESI":
                 links = [
                     { href: "/jury", label: "Jüri Sayfası" },
-                    { href: "/IlanlarPage", label: "İlanlar" },
                     { href: "#", label: "Çıkış Yap", onClick: handleLogout },
                 ];
                 break;
             case "ADMIN":
                 links = [
                     { href: "/admin", label: "Admin Paneli" },
-                    { href: "/IlanlarPage", label: "İlanlar" },
                     { href: "#", label: "Çıkış Yap", onClick: handleLogout },
                 ];
                 break;
             case "YONETICI":
                 links = [
                     { href: "/IlanYonetimi", label: "İlan Yönetim Sayfası" },
-                    { href: "/IlanlarPage", label: "İlanlar" },
                     { href: "#", label: "Çıkış Yap", onClick: handleLogout },
                 ];
                 break;
             default:
                 links = [
                     { href: "/", label: "Ana Sayfa" },
-                    { href: "/IlanlarPage", label: "İlanlar" },
                     { href: "/login", label: "Giriş Yap" },
                 ];
         }
