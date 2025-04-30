@@ -144,6 +144,11 @@ export default function MakaleForm({ onSave }: MakaleFormProps) {
         onChange={handleChange}
         className="border p-2 rounded"
       />
+      <input
+        type="text"
+        placeholder="Linki"
+        className="border p-2 rounded"
+      />
 
       <input
         type="text"
