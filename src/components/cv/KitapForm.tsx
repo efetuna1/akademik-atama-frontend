@@ -110,6 +110,11 @@ const KitapForm: React.FC<KitapFormProps> = ({ onSave }) => {
         className="border p-2 rounded"
         required
       />
+       <input
+        type="text"
+        placeholder="Linki"
+        className="border p-2 rounded"
+      />
       <input
         type="text"
         name="yayinevi"
