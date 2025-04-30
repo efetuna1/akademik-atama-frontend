@@ -80,12 +80,20 @@ export default function AdayPage() {
         <main className="flex flex-col items-center min-h-screen bg-gray-400 p-6">
 
             <div className="max-w-4xl bg-white shadow-lg rounded-2xl p-8 w-full">
-                <Button
-                    onClick={handleGoBack}
-                    className="text-blue-600 hover:bg-blue-200 rounded "
-                >
-                    Aday Sayfasına Geri Dön
-                </Button>
+                <div className="flex justify-between mt-10">
+                    <Button
+                        onClick={handleGoBack}
+                        className="text-blue-500 hover:bg-blue-200 rounded "
+                    >
+                        Aday Sayfasına Geri Dön
+                    </Button>
+                    <Button
+                        onClick={() => router.push("/adaycv/ozgecmisim")}
+                        className="text-blue-500 py-2 px-6 rounded hover:bg-blue-200"
+                    >
+                        Özgeçmişimi İncele
+                    </Button>
+                </div>
                 <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">Aday Özgeçmiş</h1>
                 <h2 className="text-l font-semibold  mb-3">Başvuru yapabilmek için lütfen özgeçmişinizi doldurun.</h2>
 

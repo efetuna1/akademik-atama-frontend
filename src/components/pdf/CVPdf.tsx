@@ -36,7 +36,7 @@ const CVPdf = ({ data }: CVPdfProps) => (
     <Document>
         <Page size="A4" style={styles.page}>
             <Text style={{ fontSize: 18, textAlign: "center", marginBottom: 10 }}>
-                Aday Özgeçmişi
+                Aday zgeçmis Belgesi
             </Text>
 
             {/* A. Makaleler */}
