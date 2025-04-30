@@ -9,7 +9,7 @@ export function LoginForm() {
   const [role, setRole] = useState<"candidate" | "jury" | "admin" | "ilanYonetici">("candidate");
   const [tcKimlikNo, setTcKimlikNo] = useState("");
   const [loading, setLoading] = useState(false);
-  const [checkingToken, setCheckingToken] = useState(true); 
+  const [checkingToken, setCheckingToken] = useState(true);
 
   const router = useRouter();
 
@@ -22,10 +22,10 @@ export function LoginForm() {
         case "ADMIN":
           router.push("/admin");
           break;
-        case "ILANYONETICI":
-          router.push("/ilanYonetimi");
+        case "YONETICI":
+          router.push("/yonetici");
           break;
-        case "JURI":
+        case "JURI_UYESI":
           router.push("/jury");
           break;
         case "ADAY":
@@ -34,7 +34,7 @@ export function LoginForm() {
           break;
       }
     } else {
-      setCheckingToken(false); 
+      setCheckingToken(false);
     }
   }, [router]);
 
@@ -69,11 +69,11 @@ export function LoginForm() {
         case "ADMIN":
           router.push("/admin");
           break;
-        case "ILANYONETICI":
+        case "YONETICI":
           router.push("/IlanYonetimi");
           break;
-        case "JURI":
-          router.push("/jury/dashboard");
+        case "JURI_UYESI":
+          router.push("/jury");
           break;
         case "ADAY":
         default:
@@ -130,10 +130,9 @@ export function LoginForm() {
       </Button>
 
       <div className="text-center text-sm text-gray-600 mt-4">
-        {role === "candidate" && <p>Başvuru oluşturabilir ve takip edebilirsiniz.</p>}
-        {role === "jury" && <p>Başvuruları değerlendirebilir ve puanlayabilirsiniz.</p>}
-        {role === "admin" && <p>Yönetici paneline erişebilirsiniz.</p>}
-        {role === "ilanYonetici" && <p>İlanları yönetebilirsiniz.</p>}
+        <p>Kocaeli Üniversitesi Atama Başvuru Sistemine hoş geldiniz! Lütfen devam etmek için giriş yapın.</p>
+        <br></br>
+        <p>Henüz üye değil misiniz? Aşağıya tıklayarak üye olun.</p>
       </div>
 
       <div className="mt-6 text-center">

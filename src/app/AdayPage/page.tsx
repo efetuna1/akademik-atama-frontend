@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import Navbar from "@/components/navbar";
 
 type Basvuru = {
   id: number;
@@ -71,28 +72,54 @@ const KullaniciBasvurularPage = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-center text-blue-700 mb-8">Başvurularım</h1>
+    <div>
+      <Navbar />
+      <div className="p-6 bg-gray-100 min-h-screen"
+        style={{
+          backgroundImage: "url('/banner2.png')",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+        }}
+      >
 
-        {basvurular.length === 0 ? (
-          <p className="text-center text-gray-600">Henüz bir başvurunuz bulunmuyor.</p>
-        ) : (
-          <div className="space-y-4">
-            {basvurular.map((basvuru) => (
-              <div key={basvuru.id} className="p-4 bg-white rounded shadow-md">
-                <h2 className="text-xl font-semibold text-blue-600">{basvuru.ilan.baslik}</h2>
-                <p className="text-gray-700">Başvuru Tarihi: {new Date(basvuru.tarih).toLocaleDateString()}</p>
-                <p className="mt-1">Durum: {durumBadge(basvuru.durum)}</p>
+        <div className="max-w-4xl mx-auto">
+
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+
+            <h1 className="text-3xl font-bold text-center text-blue-700">Başvurularım</h1>
+
+
+            <div className="flex justify-between mt-10">
+              <Button
+                onClick={() => router.push("/")}
+                className="text-blue-500 py-2 px-6 rounded hover:bg-blue-200"
+              >
+                Ana Sayfaya Dön
+              </Button>
+              <Button
+                onClick={() => router.push("/adaycv")}
+                className="text-blue-500 py-2 px-6 rounded hover:bg-blue-200"
+              >
+                Özgeçmişimi İncele
+              </Button>
+            </div>
+
+            <br></br><hr></hr><br></br>
+            {basvurular.length === 0 ? (
+              <p className="text-center text-gray-600">Henüz bir başvurunuz bulunmuyor.</p>
+            ) : (
+              <div className="space-y-4">
+                {basvurular.map((basvuru) => (
+                  <div key={basvuru.id} className="p-4 bg-white rounded shadow-md">
+                    <h2 className="text-xl font-semibold text-blue-600">{basvuru.ilan.baslik}</h2>
+                    <p className="text-gray-700">Başvuru Tarihi: {new Date(basvuru.tarih).toLocaleDateString()}</p>
+                    <p className="mt-1">Durum: {durumBadge(basvuru.durum)}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
-        )}
-
-        <div className="flex justify-center mt-10">
-          <Button onClick={() => router.push("/")} className="bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-700 transition">
-            Ana Sayfaya Dön
-          </Button>
         </div>
       </div>
     </div>
