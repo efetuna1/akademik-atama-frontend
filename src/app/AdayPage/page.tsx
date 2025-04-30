@@ -101,10 +101,15 @@ const KullaniciBasvurularPage = () => {
                 onClick={() => router.push("/adaycv")}
                 className="text-blue-500 py-2 px-6 rounded hover:bg-blue-200"
               >
+                Özgeçmişimi Düzenle
+              </Button>
+              <Button
+                onClick={() => router.push("/adaycv/ozgecmisim")}
+                className="text-blue-500 py-2 px-6 rounded hover:bg-blue-200"
+              >
                 Özgeçmişimi İncele
               </Button>
             </div>
-
             <br></br><hr></hr><br></br>
             {basvurular.length === 0 ? (
               <p className="text-center text-gray-600">Henüz bir başvurunuz bulunmuyor.</p>

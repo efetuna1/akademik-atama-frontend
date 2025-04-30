@@ -19,10 +19,10 @@ export default function Home() {
         case "ADMIN":
           router.push("/admin");
           break;
-        case "ILANYONETICI":
-          router.push("/IlanYonetimi");
+        case "YONETICI":
+          router.push("/yonetici");
           break;
-        case "JURI":
+        case "JURI_UYESI":
           router.push("/jury");
           break;
         case "ADAY":
@@ -62,7 +62,6 @@ export default function Home() {
           <div className="flex flex-col gap-4 bg-black text-white">
             <Button
               onClick={handleDevamEt}
-              variant="default"
               className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-700 transition duration-200 cursor-pointer"
             >
               Devam Et
@@ -75,7 +74,7 @@ export default function Home() {
         <div className="mt-12 w-full max-w-4xl bg-white shadow-lg rounded-2xl p-6">
           <h2 className="text-2xl font-semibold text-blue-600 mb-4">Güncel İlanlar</h2>
           <Link href="/login" className="text-red-500 hover:underline mt-2 block">
-            İlanları görüntülemek ve başvuru yapmbak için buraya tıklayabilirsiniz.
+            İlanları görüntülemek ve başvuru yapmak için buraya tıklayabilirsiniz.
           </Link>
           <div className="flex flex-col gap-4">
             <div className="p-4 bg-gray-50 rounded-lg shadow-sm">

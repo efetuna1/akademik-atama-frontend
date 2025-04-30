@@ -122,22 +122,37 @@ const IlanlarPage = () => {
           backgroundPosition: "center",
         }}
       >
-        <div className="max-w-5xl w-full bg-white shadow-lg rounded-2xl p-8 relative">
-          <button
-            onClick={handleProfilimClick}
-            className="absolute top-6 right-8 text-blue-500 hover:underline font-semibold hover:cursor-pointer"
-          >
-            Profilim
-          </button>
 
+        <div className="max-w-5xl w-full bg-white shadow-lg rounded-2xl p-8 relative">
           <h1 className="text-3xl font-bold text-blue-600 text-center mb-8">
             Tüm İlanlar
           </h1>
+          <div className="flex justify-between mt-10">
+            <Button
+              onClick={() => router.push("/")}
+              className="text-blue-500 py-2 px-6 rounded hover:bg-blue-200"
+            >
+              Ana Sayfaya Dön
+            </Button>
+            <Button
+              onClick={() => router.push("/AdayPage")}
+              className="text-blue-500 py-2 px-6 rounded hover:bg-blue-200"
+            >
+              Profilim
+            </Button>
+
+          </div>
+
+
 
           {ilanlar.length === 0 ? (
             <p className="text-center text-gray-600">Şu anda kayıtlı ilan bulunmamaktadır.</p>
           ) : (
             <div className="grid gap-6">
+              <br></br><hr></hr>
+              <p className="text-center text-gray-800">Dikkat!</p>
+              <p className="text-center text-gray-800"> Lütfen başvuru yapmadan önce profilinizden özgeçmişinizdeki ilgili alanları doldurunuz. Aksi takdirde başvurunuz geçersiz sayılacaktır.</p>
+              <hr></hr>
               {ilanlar.map((ilan) => (
                 <div key={ilan.id} className="p-6 bg-gray-50 rounded-lg shadow-sm">
                   <h2 className="text-2xl font-semibold mb-2">{ilan.baslik}</h2>
@@ -178,8 +193,8 @@ const IlanlarPage = () => {
           </div>
         </div>
 
-      </main>
-    </div>
+      </main >
+    </div >
   );
 };
 

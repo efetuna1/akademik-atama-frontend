@@ -2,10 +2,39 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import Navbar from '@/components/navbar';
 
 interface JobPost {
-  id: number;         // Prisma'da id Int
-  baslik: string;     // Prisma'da baslik var, title değil
+  id: number;
+  baslik: string;
+}
+
+interface JuriDegerlendirme {
+  id: number;
+  rapor: string;
+  puan: number;
+  tarih: string;
+  aday: {
+    ad: string;
+    soyad: string;
+    tcKimlikNo: string;
+  };
+  juri: {
+    ad: string;
+    soyad: string;
+  };
+}
+
+interface BasvuruSonucu {
+  id: number;
+  durum: string;
+  kullanici: {
+    ad: string;
+    soyad: string;
+  };
+  ilan: {
+    baslik: string;
+  };
 }
 
 const AssignJury = () => {
@@ -14,6 +43,9 @@ const AssignJury = () => {
   const [tcKimlikNo, setTcKimlikNo] = useState<string>('');
   const [message, setMessage] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
+
+  const [juriDegerlendirmeler, setJuriDegerlendirmeler] = useState<JuriDegerlendirme[]>([]);
+  const [basvuruSonuclari, setBasvuruSonuclari] = useState<BasvuruSonucu[]>([]);
 
   // İlanları çek
   useEffect(() => {
@@ -31,7 +63,22 @@ const AssignJury = () => {
     fetchJobPosts();
   }, []);
 
-  // Jüri atama işlemi
+  // Jüri değerlendirme ve başvuru sonuçlarını çek
+  useEffect(() => {
+    const fetchDegerlendirmeler = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/juriDegerlendirmeler');
+        const data = await response.json();
+        setJuriDegerlendirmeler(data.degerlendirmeler || []);
+        setBasvuruSonuclari(data.basvuruSonuclari || []);
+      } catch (error) {
+        console.error('Değerlendirmeler alınırken hata:', error);
+      }
+    };
+
+    fetchDegerlendirmeler();
+  }, []);
+
   const handleAssignJury = async () => {
     if (!selectedJobPost || !tcKimlikNo) {
       setErrorMessage('Lütfen ilan seçin ve TC Kimlik No girin.');
@@ -67,55 +114,124 @@ const AssignJury = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-6">
-      <div className="max-w-2xl bg-white shadow-lg rounded-xl p-8 mx-auto">
-        <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">Jüri Atama</h1>
+    <div>
+      <Navbar />
 
-        {/* İlan listesi */}
-        <div className="mb-6">
-          <label className="block mb-2 text-lg font-semibold text-gray-700">İlanlar</label>
-          {jobPosts.length === 0 ? (
-            <p>Hiç ilan bulunamadı.</p>
+      <div className="bg-gray-100 min-h-screen p-6 space-y-12"
+        style={{
+          backgroundImage: "url('/banner2.png')",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="max-w-2xl bg-white shadow-lg rounded-xl p-8 mx-auto">
+          <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">Jüri Atama</h1>
+
+          {/* İlan listesi */}
+          <div className="mb-6">
+            <label className="block mb-2 text-lg font-semibold text-gray-700">İlanlar</label>
+            {jobPosts.length === 0 ? (
+              <p>Hiç ilan bulunamadı.</p>
+            ) : (
+              <div className="space-y-2">
+                {jobPosts.map((job) => (
+                  <Button
+                    key={job.id}
+                    variant={selectedJobPost === job.id ? 'outline' : 'default'}
+                    className="w-full justify-start"
+                    onClick={() => setSelectedJobPost(job.id)}
+                  >
+                    {job.baslik}
+                  </Button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* TC Kimlik No alanı */}
+          <div className="mb-6">
+            <label className="block mb-2 text-lg font-semibold text-gray-700">TC Kimlik No</label>
+            <input
+              type="text"
+              maxLength={11}
+              className="w-full border rounded p-2"
+              value={tcKimlikNo}
+              onChange={(e) => setTcKimlikNo(e.target.value)}
+              placeholder="TC Kimlik No girin"
+            />
+          </div>
+
+          {/* Mesajlar */}
+          {message && <div className="text-green-600 mb-4">{message}</div>}
+          {errorMessage && <div className="text-red-600 mb-4">{errorMessage}</div>}
+
+          {/* Gönder Butonu */}
+          <Button
+            onClick={handleAssignJury}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+          >
+            Jüriyi Ata
+          </Button>
+        </div>
+
+        {/* Jüri Değerlendirmeleri */}
+        <div className="max-w-5xl bg-white shadow-md rounded-xl p-6 mx-auto">
+          <h2 className="text-2xl font-bold mb-4">Jüri Değerlendirmeleri</h2>
+          {juriDegerlendirmeler.length === 0 ? (
+            <p>Henüz değerlendirme yapılmamış.</p>
           ) : (
-            <div className="space-y-2">
-              {jobPosts.map((job) => (
-                <Button
-                  key={job.id}
-                  variant={selectedJobPost === job.id ? 'default' : 'outline'}
-                  className="w-full justify-start"
-                  onClick={() => setSelectedJobPost(job.id)}
-                >
-                  {job.baslik}
-                </Button>
-              ))}
-            </div>
+            <table className="w-full table-auto text-left border">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="p-2">Jüri</th>
+                  <th className="p-2">Aday</th>
+                  <th className="p-2">Rapor</th>
+                  <th className="p-2">Puan</th>
+                  <th className="p-2">Tarih</th>
+                </tr>
+              </thead>
+              <tbody>
+                {juriDegerlendirmeler.map((d) => (
+                  <tr key={d.id} className="border-t">
+                    <td className="p-2">{d.juri.ad} {d.juri.soyad}</td>
+                    <td className="p-2">{d.aday.ad} {d.aday.soyad}</td>
+                    <td className="p-2">{d.rapor}</td>
+                    <td className="p-2">{d.puan ?? '-'}</td>
+                    <td className="p-2">{new Date(d.tarih).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
         </div>
 
-        {/* TC Kimlik No alanı */}
-        <div className="mb-6">
-          <label className="block mb-2 text-lg font-semibold text-gray-700">TC Kimlik No</label>
-          <input
-            type="text"
-            maxLength={11}
-            className="w-full border rounded p-2"
-            value={tcKimlikNo}
-            onChange={(e) => setTcKimlikNo(e.target.value)}
-            placeholder="TC Kimlik No girin"
-          />
+        {/* Başvuru Sonuçları */}
+        <div className="max-w-5xl bg-white shadow-md rounded-xl p-6 mx-auto">
+          <h2 className="text-2xl font-bold mb-4">Başvuru Sonuçları</h2>
+          {basvuruSonuclari.length === 0 ? (
+            <p>Henüz başvuru sonucu yok.</p>
+          ) : (
+            <table className="w-full table-auto text-left border">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="p-2">Aday</th>
+                  <th className="p-2">İlan</th>
+                  <th className="p-2">Durum</th>
+                </tr>
+              </thead>
+              <tbody>
+                {basvuruSonuclari.map((b) => (
+                  <tr key={b.id} className="border-t">
+                    <td className="p-2">{b.kullanici.ad} {b.kullanici.soyad}</td>
+                    <td className="p-2">{b.ilan.baslik}</td>
+                    <td className="p-2 font-semibold">{b.durum}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
-
-        {/* Mesajlar */}
-        {message && <div className="text-green-600 mb-4">{message}</div>}
-        {errorMessage && <div className="text-red-600 mb-4">{errorMessage}</div>}
-
-        {/* Gönder Butonu */}
-        <Button
-          onClick={handleAssignJury}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold"
-        >
-          Jüriyi Ata
-        </Button>
       </div>
     </div>
   );
