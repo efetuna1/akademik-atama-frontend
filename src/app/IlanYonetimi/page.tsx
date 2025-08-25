@@ -12,7 +12,7 @@ const kadroTurleri = [
 ];
 
 const durumlar = [
-    { value: "ACIK", label: "Açık" },
+    { value: "ACIK", label: "açık" },
     { value: "KAPALI", label: "Kapalı" },
 ];
 
